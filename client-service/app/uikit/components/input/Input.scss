@@ -1,0 +1,174 @@
+@import "@/app/styles";
+
+$transition: 150ms;
+
+.InputField {
+  $this: &;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  word-wrap: break-word;
+
+  &-Wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  &-Label {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    pointer-events: none;
+    margin-bottom: 4px;
+
+    #{$this}-Inner__error {
+      background-color: $color-red;
+    }
+
+    &Required {
+      color: $color-red;
+    }
+
+    &HiddenViewing {
+      color: $link_color;
+    }
+  }
+
+  &-Inner {
+    width: 100%;
+    border: 1px solid $secondary_bg_color;
+    border-top-left-radius: $border-radius;
+    border-top-right-radius: $border-radius;
+  }
+
+  input,
+  textarea {
+    padding: 8px 16px;
+  }
+
+  input,
+  input:hover,
+  textarea,
+  textarea:hover {
+    background-color: $secondary_bg_color;
+  }
+
+  &__active {
+    width: 100%;
+
+    #{$this}-Inner__active {
+      background-color: $secondary_bg_color;
+      color: $text_color;
+
+      input,
+      input:hover,
+      textarea,
+      textarea:hover {
+        background-color: $secondary_bg_color;
+      }
+    }
+
+    input:-webkit-autofill.Input__active,
+    input:-webkit-autofill.Input__active:hover,
+    input:-webkit-autofill.Input__active:focus,
+    input:-webkit-autofill.Input__active:active {
+      -webkit-box-shadow: 0 0 0 30px $secondary_bg_color inset !important;
+    }
+
+    input:-webkit-autofill {
+      background-color: $secondary_bg_color !important;
+      border: 1px solid $secondary_bg_color !important;
+      -webkit-text-fill-color: $text_color;
+    }
+
+    input:-webkit-autofill:focus {
+      background-color: $secondary_bg_color !important;
+      border: 1px solid $secondary_bg_color !important;
+      -webkit-text-fill-color: $text_color;
+    }
+
+    & textarea,
+    & textarea:hover {
+      background-color: $bg_color;
+    }
+
+    #{$this}-Inner__active#{$this}-Inner__error {
+      background-color: $bg_color;
+    }
+  }
+
+  &__disabled {
+    cursor: default;
+
+    #{$this}-Inner__disabled {
+      background-color: $color-gray;
+
+      input:hover,
+      input {
+        background-color: $color-gray;
+      }
+    }
+  }
+
+  /* -------------------- Fix autocomplete form -------------------- */
+  #{$this}-Inner:-webkit-autofill {
+    -webkit-background-clip: text;
+  }
+
+  &-ErrorField {
+    position: absolute;
+    bottom: -18px;
+    left: 0;
+    color: $color-red;
+    transition: all $transition;
+  }
+}
+
+.InputField-Inner.Textarea {
+  height: 100%;
+}
+
+.Input {
+  $this: &;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 1px solid $secondary_bg_color;
+  border-top-left-radius: $border-radius;
+  border-top-right-radius: $border-radius;
+  outline: $secondary_bg_color;
+  color: $text_color;
+  background-color: $secondary_bg_color;
+
+  &:hover {
+    transition: background-color 0.25s ease;
+  }
+
+  &#{$this}__error {
+    background-color: $secondary_bg_color;
+
+    &:hover {
+      background-color: $secondary_bg_color;
+      transition: background-color 0.25s ease;
+    }
+  }
+}
+
+.Input.Textarea {
+  $this: &;
+  display: block;
+  padding: 8px 8px 0 8px;
+  height: 100px;
+  width: 100%;
+}
+
+.Textarea {
+  &-MaxLength {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+}

@@ -1,0 +1,61 @@
+@import "@/app/styles";
+
+.ProfilePage {
+  position: relative;
+
+  & .swiper {
+    height: 100%;
+  }
+
+  &-Slider {
+    position: relative;
+    height: 400px;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  &-User {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  &-UserAvatar {
+    position: relative;
+    margin-right: 8px;
+  }
+
+  &-UserAvatarImage {
+    object-fit: cover;
+    object-position: center;
+    border-radius: $border-radius-2xl;
+  }
+
+  &-Inner {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &-Row {
+    display: flex;
+    align-items: center;
+  }
+
+  &-Label {
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  &-Icon {
+    margin-right: 8px;
+  }
+
+  &-Form {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    height: 0;
+    width: 0;
+  }
+}

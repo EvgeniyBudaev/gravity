@@ -1,0 +1,58 @@
+@import "@/app/styles";
+
+.SidebarContent {
+  &-Header {
+    background-color: $bg_color;
+    margin-bottom: 25px;
+  }
+
+  &-Cancel {
+    cursor: pointer;
+
+    &:hover,
+    &:active {
+      opacity: $opacity;
+    }
+  }
+
+  &-Save {
+    font-weight: 700;
+    cursor: pointer;
+
+    &:hover,
+    &:active {
+      opacity: $opacity;
+    }
+  }
+
+  &-List {
+    background-color: $bg_color;
+    border-top: 1px solid $secondary_bg_color;
+    border-bottom: 1px solid $secondary_bg_color;
+    padding: 0 0 0 16px;
+
+    &-Item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 50px;
+      border-bottom: 1px solid $secondary_bg_color;
+      cursor: pointer;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover,
+      &:active {
+        opacity: $opacity;
+      }
+    }
+
+    & .Icon {
+      height: 12px;
+      width: 12px;
+      margin-right: 16px;
+    }
+  }
+}

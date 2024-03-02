@@ -1,0 +1,48 @@
+@import "@/app/styles";
+
+.Button {
+  position: relative;
+  padding: 10px 30px;
+  height: max-content;
+  width: max-content;
+  color: $text_color;
+  background-color: $link_color;
+  border: 1px solid transparent;
+  border-radius: $border-radius;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  overflow: hidden;
+  z-index: 2;
+  transition: all 0.3s;
+
+  & span {
+    position: relative;
+    display: inline-block;
+    z-index: 2;
+    height: max-content;
+    transition: all $transition;
+  }
+
+  &:hover {
+    background-color: $link_color;
+    color: $text_color;
+    z-index: 2;
+  }
+
+  &.Button__disabled {
+    color: $text_color;
+    background-color: $color-gray;
+    border-color: $text_color;
+
+    &:active {
+      transform: none;
+    }
+
+    &:hover {
+      color: $text_color;
+      background-color: $color-gray;
+      border-color: $text_color;
+      cursor: not-allowed;
+    }
+  }
+}

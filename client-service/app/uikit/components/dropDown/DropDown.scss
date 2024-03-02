@@ -1,0 +1,94 @@
+@import "@/app/styles";
+
+/* ----- Открытие/закрытие DropDown ----- */
+$transition: 0.3s;
+
+.DropDown {
+  position: absolute;
+  //bottom: 20px;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  //width: calc(100% - 16px);
+  margin-left: auto;
+  margin-right: auto;
+
+  &-Panel {
+    content: "";
+    position: fixed;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    bottom: 20px;
+    height: max-content;
+    width: 100%;
+    border: 1px solid transparent;
+    border-radius: $border-radius-lg;
+    background-color: $bg_color;
+    z-index: 20;
+
+    &.enter {
+      transform: translateY(200px);
+    }
+
+    &.enter-active {
+      transform: translateY(0);
+      transition: transform $transition;
+    }
+
+    &.exit {
+      transform: translateY(0);
+      transition: transform $transition;
+    }
+
+    &.exit-active {
+      transform: translateY(200px);
+      transition: transform $transition;
+    }
+  }
+
+  &-Menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 8px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &-MenuItem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $link_color;
+    background-color: $secondary_bg_color;
+    width: 100%;
+    padding: 0 16px;
+    min-height: 46px;
+    cursor: pointer;
+    border-bottom: 1px solid $bg_color;
+    border-radius: $border-radius-xl;
+    transition: all $transition;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &-Cancel {
+      font-weight: bold;
+    }
+
+    &-Warning {
+      color: $color-red;
+    }
+
+    &:hover,
+    &:active {
+      opacity: $opacity;
+    }
+  }
+}

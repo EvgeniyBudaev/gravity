@@ -1,0 +1,20 @@
+@import "@/app/styles";
+
+.Header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: $bg_color;
+  height: 50px;
+  padding: 16px;
+
+  &-Action {
+    color: $link_color;
+    cursor: pointer;
+
+    &:hover,
+    &:active {
+      opacity: $opacity;
+    }
+  }
+}

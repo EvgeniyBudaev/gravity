@@ -1,0 +1,22 @@
+.ReviewList {
+  height: calc(100vh - 200px);
+  overflow-y: auto;
+
+  &-Inner {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+
+  &-Content {
+    flex: 1 0 auto;
+  }
+
+  &-Footer {
+    display: flex;
+    justify-content: center;
+    overflow-y: hidden;
+    width: 100%;
+    margin-top: 16px;
+  }
+}

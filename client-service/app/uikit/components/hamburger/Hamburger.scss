@@ -1,0 +1,23 @@
+@import "@/app/styles";
+
+.Hamburger {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  background-color: $bg_color;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  & .icon-dark {
+    fill: $text_color;
+  }
+
+  &:hover,
+  &:active {
+    opacity: $opacity;
+  }
+}

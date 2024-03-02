@@ -1,0 +1,62 @@
+@import "@/app/styles";
+
+.Slider {
+  &-WrapperImage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+  }
+
+  &-Image {
+    display: block;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  &-HeartBlock {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: 100%;
+    color: $color-red;
+    margin-bottom: 24px;
+    z-index: 10;
+    cursor: pointer;
+  }
+
+  &-HeartInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &-HeartMessage {
+    color: $text_color;
+    background-color: $secondary_bg_color;
+    padding: 4px;
+    border-radius: $border-radius;
+  }
+
+  &-Icon {
+    margin-top: 8px;
+
+    &:hover,
+    &:active {
+      opacity: $opacity;
+    }
+  }
+
+  &-Online.Online {
+    bottom: 24px;
+    left: 8px;
+  }
+
+  .swiper-pagination-progressbar .swiper-pagination-progressbar-fill {
+    background: $text_color;
+  }
+}

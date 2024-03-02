@@ -1,0 +1,24 @@
+@import "@/app/styles";
+
+$imageSize: 80px;
+
+.Previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  &-Thumb {
+    &-Inner {
+      position: relative;
+      height: $imageSize;
+      width: $imageSize;
+    }
+
+    &-Image {
+      object-fit: cover;
+      object-position: center;
+      border: 1px solid transparent;
+      border-radius: $border-radius;
+    }
+  }
+}

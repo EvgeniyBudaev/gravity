@@ -1,0 +1,17 @@
+@import "@/app/styles";
+
+.Layout {
+  &-Content {
+    margin-bottom: 78px;
+    height: 100%;
+  }
+
+  &-Form {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+}

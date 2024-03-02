@@ -1,0 +1,27 @@
+@import "@/app/styles";
+
+.ProfileForm {
+  &-Header-Cancel,
+  &-Header-Save {
+    color: $link_color;
+    cursor: pointer;
+
+    &:hover,
+    &:active {
+      opacity: $opacity;
+    }
+  }
+
+  &-Star {
+    display: flex;
+    align-items: center;
+  }
+
+  &-Required {
+    color: $color-red;
+  }
+
+  &-Hidden {
+    color: $link_color;
+  }
+}

@@ -1,0 +1,53 @@
+@import "@/app/styles";
+
+.Footer {
+  $this: &;
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 8px 16px;
+  width: 100%;
+  background-color: $bg_color;
+
+  &-Item {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 16px;
+    width: 46px;
+    cursor: pointer;
+
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+
+  &-Item-Avatar {
+    top: -22px;
+  }
+
+  &-Avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+  }
+
+  &-Link {
+    &__isActive {
+      & .icon-dark {
+        fill: $link_color;
+      }
+
+      & #{$this}-Avatar {
+        border-color: $link_color;
+      }
+    }
+  }
+}

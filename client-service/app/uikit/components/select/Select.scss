@@ -1,0 +1,31 @@
+@import "@/app/styles";
+
+.Select {
+  position: relative;
+
+  &-Header {
+    display: flex;
+    align-items: center;
+
+    &-Label {
+      width: 100px;
+      margin-right: 8px;
+    }
+
+    &-LabelRequired {
+      color: red;
+    }
+
+    &Right {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    & .Icon {
+      height: 12px;
+      width: 12px;
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "errorBoundary": {
+    "common": {
+      "forbidden": "Недостаточно прав доступа",
+      "geoPositionError": "Ошибка определения геопозиции. Проверьте интернет соединение и настройки своего оборудования. Попробуйте обновить страницу",
+      "unexpectedError": "Произошла непредвиденная ошибка"
+    }
+  },
+  "pages": {
+    "login": {
+      "keycloak": "Войти",
+      "title": "Love ассистент",
+      "description": "Добро пожаловать в официальное приложение Love ассистент",
+      "noAccount": "нет аккаунта?",
+      "goToSignup": "Зарегистрироваться"
+    },
+    "profile": {
+      "doubleLike": "Повторный лайк будет доступен завтра"
+    }
+  },
+  "common": {
+    "titles": {
+      "accountBlocked": "Аккаунт заблокирован",
+      "accountDeleted": "Аккаунт удален",
+      "required": "поле обязательное к заполнению",
+      "hidden": "информация скрыта от пользователей",
+      "publicPhotos": "Публичные фото",
+      "moreDetails": "Подробнее",
+      "properties": "Свойства",
+      "reviewDeleted": "Удалить отзыв",
+      "reviewAdd": "Новый отзыв",
+      "filtersGeneral": "Общие фильтры",
+      "age": "Возраст",
+      "online": "Онлайн"
+    },
+    "actions": {
+      "cancel": "Отменить",
+      "save": "Сохранить",
+      "settings": "Настройки",
+      "deleteAccount": "Удалить аккаунт",
+      "filterSetup": "Настройте фильтр",
+      "block": "Заблокировать",
+      "complaint": "Пожаловаться и заблокировать",
+      "edit": "Редактировать",
+      "delete": "Удалить",
+      "reviews": "Отзывы",
+      "add": "Добавить",
+      "profileDetail": "Перейти в профиль",
+      "exit": "Выйти"
+    },
+    "form": {
+      "field": {
+        "displayName": "Имя для отображения",
+        "mobileNumber": "Мобильный номер",
+        "password": "Пароль",
+        "passwordConfirm": "Подтверждение пароля",
+        "birthday": "Дата рождения",
+        "date": {
+          "placeholder": "Выберите дату"
+        },
+        "description": "Описание",
+        "gender": "Пол",
+        "searchGender": "Ищу",
+        "location": "Местоположение",
+        "height": "Рост",
+        "weight": "Вес",
+        "lookingFor": "Ищу для",
+        "rating": "Оценка",
+        "message": "Текст сообщения"
+      }
+    },
+    "reductions": {
+      "cm": "см",
+      "kg": "кг",
+      "km": "км",
+      "m": "м"
+    },
+    "title": {
+      "ratingTotal": "Общий рейтинг",
+      "reviews": "Отзывы"
+    },
+    "validation": {
+      "email": "Email указан неправильно",
+      "cyrillicEmail": "Только латинские символы",
+      "empty": "Поле не может быть пустым!",
+      "onlyLetters": "Допустимые символы: только буквы",
+      "passwordNotMatch": "Пароли не совпадают",
+      "wrongCharacter": "Допустимые символы: 0-9, \"-\", \" \", \"+\", \"(\", \")\"",
+      "file": {
+        "expectedFile": "Прикрепить можно только файл",
+        "maxSize": "Максимальный размер 200mb",
+        "maxAmount": "Максимальное кол-во файлов 50"
+      }
+    }
+  },
+  "reviews": {
+    "noReviews": "Будь первым, оставь отзыв"
+  }
+}

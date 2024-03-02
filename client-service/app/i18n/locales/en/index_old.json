@@ -1,0 +1,204 @@
+{
+  "pages": {
+    "login": {
+      "enter": "Login",
+      "service": "Login to the authorization service",
+      "signup": "Register"
+    },
+    "admin": {
+      "title": "Admin panel",
+      "attributes": {
+        "table": {
+          "columns": {
+            "info": {
+              "id": "ID",
+              "attributeId": "Attribute ID",
+              "uuid": "UUID",
+              "value": "Value",
+              "name": "Name",
+              "alias": "Alias",
+              "type": "Type",
+              "updatedAt": "Update date"
+            }
+          }
+        }
+      },
+      "attributeEdit": {
+        "addModal": "Adding a new value",
+        "editModal": "Editing a value"
+      },
+      "selectables": {
+        "table": {
+          "columns": {
+            "info": {
+              "id": "ID",
+              "attributeId": "Attribute ID",
+              "uuid": "UUID",
+              "value": "Value",
+              "updatedAt": "Update date"
+            }
+          }
+        }
+      },
+      "productAdd": {
+        "select": "Select catalog"
+      }
+    },
+    "adminPanel": {
+      "attributeList": {
+        "table": {
+          "header": "List of attributes"
+        },
+        "title": "List of attributes"
+      },
+      "selectableList": {
+        "table": {
+          "header": "List of selectables"
+        }
+      },
+      "catalogList": {
+        "table": {
+          "header": "List of catalogs"
+        },
+        "title": "List of catalogs"
+      },
+      "productList": {
+        "table": {
+          "header": "List of products"
+        },
+        "title": "List of products"
+      },
+      "title": "Admin panel",
+      "attributeAdd": {
+        "title": "Adding an attribute"
+      },
+      "attributeEdit": {
+        "title": "Editing an attribute"
+      },
+      "catalogAdd": {
+        "title": "Adding a catalog"
+      },
+      "catalogEdit": {
+        "title": "Editing a catalog"
+      },
+      "productAdd": {
+        "title": "Adding a product"
+      },
+      "productEdit": {
+        "title": "Editing a product"
+      }
+    },
+    "catalog": {
+      "from": "from",
+      "goods": "goods"
+    },
+    "signup": {
+      "register": "Register!",
+      "title": "Registration",
+      "haveAccount": "Have an account?",
+      "enter": "Enter"
+    },
+    "register": {
+      "button": "Register",
+      "title": "Registration",
+      "haveAccount": "Have an account?",
+      "enter": "Enter"
+    }
+  },
+  "common": {
+    "actions": {
+      "create": "Создать",
+      "update": "Update",
+      "apply": "Apply",
+      "search": "Search"
+    },
+    "previews": {
+      "defaultImage": "Default image",
+      "addDefaultImage": "Add default image",
+      "addImage": "Add new image to gallery",
+      "images": "List of uploaded images",
+      "deleteImage": "Delete image"
+    },
+    "table": {
+      "options": {
+        "fields": "Table fields",
+        "modal": "Table properties",
+        "sorting": {
+          "asc": "Ascending",
+          "default": "Default",
+          "desc": "Descending",
+          "hide": "Hide column"
+        }
+      }
+    },
+    "info": {
+      "noData": "No data"
+    },
+    "modal": {
+      "deleteQuestion": "Are you sure you want to delete?"
+    },
+    "titles": {
+      "birthday": "Birthday"
+    },
+    "form": {
+      "field": {
+        "placeholder": {
+          "date": "Добавь сюда перевод!!!"
+        },
+        "filterSetup": "Set up filter",
+        "name": "First name",
+        "firstName": "First name",
+        "lastName": "Last name",
+        "username": "Username for authorization",
+        "email": "Email"
+      }
+    },
+    "title": {
+      "comments": "Добавь сюда перевод!!!"
+    }
+  },
+  "form": {
+    "image": "Image",
+    "enabled": "Enabled",
+    "alias": "Alias",
+    "name": "Name",
+    "type": "Type",
+    "isEnabled": "Enabled",
+    "value": "Value",
+    "userName": "Login",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "mobileNumber": "Mobile number",
+    "password": "Password",
+    "passwordConfirm": "Password confirm"
+  },
+  "table": {
+    "columns": {
+      "defaultImages": "Default image",
+      "name": "Name",
+      "alias": "Alias",
+      "type": "Type",
+      "updatedAt": "Update date",
+      "images": "Image"
+    }
+  },
+  "footer": {
+    "about": "About",
+    "shipping": "Shipping",
+    "contacts": "Contacts"
+  },
+  "header": {
+    "adminPanel": "Admin panel",
+    "exit": "Exit",
+    "enter": "Enter"
+  },
+  "fileUploader": {
+    "title": "Drag and drop your files or click to upload",
+    "subTitle": "Supported file types: {types}",
+    "action": "Add"
+  },
+  "globalSearchResults": {
+    "title": "Global search results"
+  }
+}

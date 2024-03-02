@@ -1,0 +1,50 @@
+@import "@/app/styles";
+
+.ReviewListItem {
+  margin: 16px 0;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &-Header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  &-Info {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  &-DisplayName {
+    margin-right: 8px;
+  }
+
+  &-IconList {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    & .Icon {
+      width: 16px;
+      cursor: pointer;
+    }
+
+    &-IconEdit {
+      margin-right: 16px;
+    }
+  }
+
+  &-Rating {
+    margin-bottom: 8px;
+  }
+
+  &-Inner {
+    background-color: $secondary_bg_color;
+    padding: 8px;
+    border-radius: $border-radius;
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "errorBoundary": {
+    "common": {
+      "forbidden": "No access to the report",
+      "geoPositionError": "Error determining geoposition. Check your Internet connection and your equipment settings. Try refreshing the page",
+      "unexpectedError": "Unexpected error"
+    }
+  },
+  "pages": {
+    "login": {
+      "keycloak": "Sing in",
+      "title": "Love assistant",
+      "description": "Welcome to the official Love assistant app.",
+      "noAccount": "no account?",
+      "goToSignup": "Sign up"
+    },
+    "profile": {
+      "doubleLike": "Re-like will be available tomorrow"
+    }
+  },
+  "common": {
+    "titles": {
+      "accountBlocked": "Account blocked",
+      "accountDeleted": "Account deleted",
+      "required": "required field",
+      "hidden": "information is hidden from users",
+      "publicPhotos": "Public photos",
+      "moreDetails": "More details",
+      "properties": "Properties",
+      "reviewDeleted": "Review deleted",
+      "reviewAdd": "New review",
+      "filtersGeneral": "General filters",
+      "age": "Age",
+      "online": "Online"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save",
+      "settings": "Settings",
+      "deleteAccount": "Delete account",
+      "filterSetup": "Set up a filter",
+      "block": "Block",
+      "complaint": "Complain and block",
+      "edit": "Edit",
+      "delete": "Delete",
+      "reviews": "Reviews",
+      "add": "Add",
+      "profileDetail": "Go to profile",
+      "exit": "Exit"
+    },
+    "form": {
+      "field": {
+        "displayName": "Display name",
+        "mobileNumber": "Mobile number",
+        "password": "Password",
+        "passwordConfirm": "Password confirmation",
+        "birthday": "Birthday",
+        "date": {
+          "placeholder": "Select date"
+        },
+        "description": "Description",
+        "gender": "Gender",
+        "searchGender": "Gender search",
+        "location": "Location",
+        "height": "Height",
+        "weight": "Weight",
+        "lookingFor": "Looking for",
+        "rating": "Rating",
+        "message": "Message text"
+      }
+    },
+    "reductions": {
+      "cm": "cm",
+      "kg": "kg",
+      "km": "km",
+      "m": "m"
+    },
+    "title": {
+      "ratingTotal": "Overall rating",
+      "reviews": "Reviews"
+    },
+    "validation": {
+      "email": "Invalid email",
+      "cyrillicEmail": "Only Latin characters",
+      "empty": "Field cannot be empty",
+      "onlyLetters": "Allowed characters: letters only",
+      "passwordNotMatch": "Password mismatch",
+      "wrongCharacter": "Allowed characters: 0-9, \"-\", \" \", \"+\", \"(\", \")\"",
+      "file": {
+        "expectedFile": "You can only attach a file",
+        "maxSize": "Maximum size 200mb",
+        "maxAmount": "Maximum number of files 50"
+      }
+    }
+  },
+  "reviews": {
+    "noReviews": "Be the first to write a review"
+  }
+}

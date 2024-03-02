@@ -1,0 +1,25 @@
+.DeleteReview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+
+  &-Form {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    height: 0;
+    width: 0;
+  }
+
+  &-DropDown {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+  }
+}

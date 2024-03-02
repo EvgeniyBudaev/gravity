@@ -1,0 +1,21 @@
+@import "@/app/styles";
+
+.ReviewForm {
+  &-Star {
+    display: flex;
+    align-items: center;
+  }
+
+  &-Required {
+    color: $color-red;
+  }
+
+  &-Textarea.Input.Textarea {
+    height: 400px;
+  }
+
+  &-Link {
+    display: flex;
+    align-items: center;
+  }
+}

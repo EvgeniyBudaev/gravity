@@ -1,0 +1,17 @@
+@import "@/app/styles";
+
+.SearchBar {
+  display: flex;
+  align-items: center;
+  background-color: $secondary_bg_color;
+  width: 200px;
+  max-width: 100%;
+  border-radius: $border-radius-2xl;
+  padding: 8px;
+
+  &-Icon {
+    height: 16px;
+    width: 16px;
+    margin-right: 8px;
+  }
+}

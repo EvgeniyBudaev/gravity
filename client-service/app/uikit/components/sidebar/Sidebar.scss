@@ -1,0 +1,36 @@
+@import "@/app/styles";
+
+/* ----- Открытие/закрытие Sidebar ----- */
+$transition: 0.3s;
+
+.Sidebar {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  max-width: 100vw;
+  width: 100%;
+  height: 100vh;
+  background-color: $secondary_bg_color;
+  overflow: auto;
+  z-index: 50;
+
+  &.enter {
+    transform: translateX(500px);
+  }
+
+  &.enter-active {
+    transform: translateX(0);
+    transition: transform $transition;
+  }
+
+  &.exit {
+    transform: translateX(0);
+    transition: transform $transition;
+  }
+
+  &.exit-active {
+    transform: translateX(500px);
+    transition: transform $transition;
+  }
+}

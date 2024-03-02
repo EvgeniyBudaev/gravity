@@ -1,0 +1,100 @@
+@import "@/app/styles";
+
+.HeadlessPopover {
+  position: relative;
+  height: inherit;
+  width: 100%;
+
+  &-Button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: none;
+    background-color: inherit;
+    color: inherit;
+    outline-width: 0;
+    height: inherit;
+    width: 100%;
+    padding: 0;
+    cursor: pointer;
+    transition: all $transition;
+  }
+
+  &-Trigger {
+    width: 100%;
+  }
+
+  &-Panel {
+    position: absolute;
+    z-index: 50;
+    margin-top: 12px;
+    width: 100%;
+
+    &__left {
+      left: 0;
+    }
+
+    &__center {
+      left: 2px;
+      transform: translateX(-2px);
+    }
+
+    &__right {
+      right: 0;
+    }
+  }
+
+  &-PanelContent {
+    position: relative;
+    border: 1px solid $secondary_bg_color;
+    border-radius: $border-radius;
+    width: 100%;
+    transition: all $transition;
+
+    &:hover {
+      border: 1px solid $secondary_bg_color;
+    }
+  }
+
+  &-Transition {
+    &__enter {
+      transition: all $transition ease-out;
+    }
+
+    &__enterFrom {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+
+    &__enterTo {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    &__leave {
+      transition: all $transition ease-in;
+    }
+
+    &__leaveFrom {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    &__leaveTo {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+  }
+
+  & .rdrCalendarWrapper {
+    background-color: $secondary_bg_color;
+  }
+
+  & .rdrDay:not(.rdrDayPassive) .rdrDayNumber span {
+    color: $text_color;
+  }
+
+  & .rdrDay.rdrDayPassive .rdrDayNumber span {
+    color: #3e484f;
+  }
+}

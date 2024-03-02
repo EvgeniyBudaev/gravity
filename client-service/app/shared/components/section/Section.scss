@@ -1,0 +1,27 @@
+@import "@/app/styles";
+
+.Section {
+  position: relative;
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &-Header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-transform: uppercase;
+    padding: 30px 16px 2px;
+    margin-bottom: 16px;
+  }
+
+  &-Container {
+    margin: 0 16px;
+  }
+
+  &-TitleRequired {
+    color: red;
+  }
+}

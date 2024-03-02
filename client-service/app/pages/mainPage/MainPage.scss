@@ -1,0 +1,29 @@
+@import "@/app/styles";
+
+$imageHeight: 120px;
+
+.MainPage {
+  &-List {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax($imageHeight, 1fr));
+    gap: 1px;
+    justify-content: center;
+    align-content: center;
+  }
+
+  &-WrapperImage {
+    position: relative;
+    height: $imageHeight;
+    width: 100%;
+  }
+
+  &-Image {
+    object-fit: cover;
+    object-position: center;
+  }
+
+  &-Online {
+    top: 4px;
+    left: 4px;
+  }
+}

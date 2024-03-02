@@ -1,0 +1,51 @@
+@import "@/app/styles";
+
+.ProfileSidebar {
+  .SidebarContent {
+    &-Header {
+      background-color: $bg_color;
+      margin-bottom: 25px;
+    }
+
+    &-Cancel {
+      cursor: pointer;
+
+      &:hover,
+      &:active {
+        opacity: $opacity;
+      }
+    }
+
+    &-List {
+      background-color: $bg_color;
+      border-top: 1px solid $secondary_bg_color;
+      border-bottom: 1px solid $secondary_bg_color;
+      padding: 0 0 0 16px;
+
+      &-Item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 50px;
+        border-bottom: 1px solid $secondary_bg_color;
+        cursor: pointer;
+
+        &-Delete {
+          color: $color-red;
+        }
+
+        &:hover,
+        &:active {
+          opacity: $opacity;
+        }
+      }
+    }
+  }
+
+  &-Form {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+  }
+}

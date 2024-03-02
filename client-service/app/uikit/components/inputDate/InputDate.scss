@@ -1,0 +1,122 @@
+@import "@/app/styles";
+
+.InputDate {
+  $this: &;
+  color: $text_color;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+
+  &-Inner {
+    display: flex;
+    flex-flow: column;
+    position: relative;
+  }
+
+  #{$this}-Text {
+    background-color: $secondary_bg_color;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    outline: none;
+    padding: 9px 12px;
+  }
+
+  &-Title {
+    color: $text_color;
+  }
+
+  &-SubTitle {
+    color: $text_color;
+  }
+
+  &-IconWrapper {
+    display: flex;
+    align-items: center;
+    margin: 8px 0 4px;
+    position: relative;
+
+    &__isFocusable {
+      &:hover,
+      &:focus {
+        .InputDate-Text {
+          border: 1px solid $text_color;
+        }
+      }
+
+      &:hover {
+        #{$this}-PostIcon {
+          visibility: visible;
+        }
+      }
+    }
+  }
+
+  &-Text {
+    cursor: pointer;
+    height: 40px;
+    width: 100%;
+
+    &__isFilled {
+      &:focus {
+        border: 1px solid $secondary_bg_color;
+        padding-right: 30px;
+      }
+    }
+
+    &:focus {
+      border: 1px solid $secondary_bg_color;
+    }
+
+    &__isPlaceholder {
+      color: $text_color;
+    }
+  }
+
+  &-PreIcon {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+  }
+
+  &-PostIcon {
+    background-color: $text_color;
+    cursor: pointer;
+    height: 12px;
+    position: absolute;
+    right: 44px;
+    width: 12px;
+    visibility: hidden;
+    -webkit-mask: url("./Close.svg") no-repeat 50% 50%;
+    mask: url("./Close.svg") no-repeat 50% 50%;
+  }
+
+  &-DatePickerIcon {
+    cursor: pointer;
+    position: absolute;
+    right: 12px;
+
+    path {
+      fill: $text_color;
+    }
+  }
+
+  &__isInvalid {
+    .InputDate-Text,
+    .InputDate-Text:hover {
+      border: 1px solid $color-red;
+    }
+
+    .InputDate-Text:focus {
+      border: 1px solid $secondary_bg_color;
+    }
+
+    #{$this}-SubTitle,
+    #{$this}-Title {
+      color: $color-red;
+    }
+  }
+}
