@@ -20,7 +20,6 @@ type TProps = {
 
 export const MainPage: FC<TProps> = ({ lng, profile, profileList }) => {
   const navigator = useNavigator({ lng });
-  console.log("MainPage positionGPS: ", navigator?.latitudeGPS);
   const { proxyUrl } = useProxyUrl();
 
   return (

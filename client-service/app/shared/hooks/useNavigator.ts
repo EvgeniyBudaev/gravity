@@ -121,8 +121,6 @@ export const useNavigator: TUseNavigator = ({ lng }) => {
     });
   }, [handleError, handlePositionChange]);
 
-  console.log("positionGPS: ", positionGPS);
-
   return useMemo(() => {
     return {
       errorPosition: positionGPS?.errorPosition,
