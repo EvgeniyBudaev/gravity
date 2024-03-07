@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { IncomingMessage, ServerResponse } from "http";
 import { fallbackLng, languages, cookieName } from "./app/i18n/settings";
 
-
 acceptLanguage.languages(languages);
 
 export const config = {
