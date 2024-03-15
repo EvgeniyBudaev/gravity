@@ -16,7 +16,6 @@ type Config struct {
 	DBPassword          string `envconfig:"DB_PASSWORD"`
 	DBName              string `envconfig:"DB_NAME"`
 	DBSSlMode           string `envconfig:"DB_SSLMODE"`
-	TelegramBotToken    string `envconfig:"TELEGRAM_BOT_TOKEN"`
 	JWTSecret           string `envconfig:"JWT_SECRET"`
 	JWTIssuer           string `envconfig:"JWT_ISSUER"`
 	JWTAudience         string `envconfig:"JWT_AUDIENCE"`

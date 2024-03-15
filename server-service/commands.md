@@ -167,3 +167,21 @@ sudo apt-get update
 sudo apt-get install libwebp-dev
 go get -u github.com/kolesa-team/go-webp
 ```
+
+Запуск RabbitMQ
+```
+docker-compose up
+```
+15672 - порт админки
+5672 - порт RabbitMQ
+После запуска можем перейти в админку по адресу http://localhost:15672
+
+https://github.com/rabbitmq/rabbitmq-tutorials/tree/main/go
+```
+go get github.com/rabbitmq/amqp091-go
+```
+
+Docker
+```
+sudo snap install docker
+```
