@@ -9,8 +9,7 @@ import (
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/logger"
 	profileUseCase "github.com/EvgeniyBudaev/gravity/server-service/internal/useCase/profile"
 	"github.com/gofiber/fiber/v2"
-	"github.com/kolesa-team/go-webp/encoder"
-	"github.com/kolesa-team/go-webp/webp"
+	"github.com/h2non/bimg"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"image/jpeg"
@@ -78,7 +77,7 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 			}
 			// The Decode function is used to read images from a file or other source and convert them into an image.
 			// Image structure
-			img, err := jpeg.Decode(fileImage)
+			_, err = jpeg.Decode(fileImage)
 			if err != nil {
 				h.logger.Debug("error func AddProfileHandler, method jpeg.Decode by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
@@ -93,17 +92,19 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 				return r.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			defer output.Close()
-			options, err := encoder.NewLossyEncoderOptions(encoder.PresetDefault, 75)
+			buffer, err := bimg.Read(filePath)
 			if err != nil {
-				h.logger.Debug("error func AddProfileHandler, method NewLossyEncoderOptions by path"+
+				h.logger.Debug("error func AddProfileHandler, method Read by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
 				return r.WrapError(ctf, err, http.StatusBadRequest)
 			}
-			if err := webp.Encode(output, img, options); err != nil {
-				h.logger.Debug("error func AddProfileHandler, method webp.Encode by path"+
+			newImage, err := bimg.NewImage(buffer).Convert(bimg.WEBP)
+			if err != nil {
+				h.logger.Debug("error func AddProfileHandler, method NewImage by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
 				return r.WrapError(ctf, err, http.StatusBadRequest)
 			}
+			bimg.Write(newFilePath, newImage)
 			if err := os.Remove(filePath); err != nil {
 				h.logger.Debug("error func AddProfileHandler, method os.Remove by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
@@ -123,6 +124,7 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 			imagesFilePath = append(imagesFilePath, newFilePath)
 			imagesProfile = append(imagesProfile, &image)
 		}
+		ctx.Done()
 		height := 0
 		if req.Height != "" {
 			heightUint64, err := strconv.ParseUint(req.Height, 10, 8)
@@ -811,7 +813,7 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 				}
 				// The Decode function is used to read images from a file or other source and convert them into an image.
 				// Image structure
-				img, err := jpeg.Decode(fileImage)
+				_, err = jpeg.Decode(fileImage)
 				if err != nil {
 					h.logger.Debug("error func UpdateProfileHandler, method jpeg.Decode by path"+
 						" internal/handler/profile/profile.go", zap.Error(err))
@@ -826,17 +828,19 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 					return r.WrapError(ctf, err, http.StatusBadRequest)
 				}
 				defer output.Close()
-				options, err := encoder.NewLossyEncoderOptions(encoder.PresetDefault, 75)
+				buffer, err := bimg.Read(filePath)
 				if err != nil {
-					h.logger.Debug("error func UpdateProfileHandler, method NewLossyEncoderOptions by path"+
+					h.logger.Debug("error func UpdateProfileHandler, method Read by path"+
 						" internal/handler/profile/profile.go", zap.Error(err))
 					return r.WrapError(ctf, err, http.StatusBadRequest)
 				}
-				if err := webp.Encode(output, img, options); err != nil {
-					h.logger.Debug("error func UpdateProfileHandler, method webp.Encode by path"+
+				newImage, err := bimg.NewImage(buffer).Convert(bimg.WEBP)
+				if err != nil {
+					h.logger.Debug("error func UpdateProfileHandler, method NewImage by path"+
 						" internal/handler/profile/profile.go", zap.Error(err))
 					return r.WrapError(ctf, err, http.StatusBadRequest)
 				}
+				bimg.Write(newFilePath, newImage)
 				if err := os.Remove(filePath); err != nil {
 					h.logger.Debug("error func UpdateProfileHandler, method os.Remove by path"+
 						" internal/handler/profile/profile.go", zap.Error(err))
