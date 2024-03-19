@@ -20,7 +20,6 @@ import {
 import { ELanguage, ERoutes } from "@/app/shared/enums";
 import type { TSession } from "@/app/shared/types/session";
 import { createPath } from "@/app/shared/utils";
-import { Todo } from "@/app/pages/Todo";
 
 type TSearchParams = {
   page?: string;
@@ -108,10 +107,4 @@ export default async function MainRoute(props: TProps) {
       />
     </main>
   );
-
-  // return (
-  //   <main>
-  //     <Todo />
-  //   </main>
-  // );
 }

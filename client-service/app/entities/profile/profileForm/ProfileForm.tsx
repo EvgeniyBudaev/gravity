@@ -67,7 +67,7 @@ export const ProfileForm: FC<TProps> = ({ isEdit, lng, profile }) => {
   );
   const { data: session } = useSessionNext();
   const keycloakSession = session as TSession;
-  const buttonSubmitRef = useRef<HTMLInputElement>(null);
+  const buttonSubmitRef = useRef<HTMLInputElement | null>(null);
   const navigator = useNavigator({ lng });
   const { queryId, user } = useTelegram();
   const { i18n, t } = useTranslation("index");
@@ -303,8 +303,8 @@ export const ProfileForm: FC<TProps> = ({ isEdit, lng, profile }) => {
     formAction(formDataDto);
   };
 
-  if (!navigator.isCoords) return <ProfileSkeletonForm />;
-  if (navigator?.errorPosition) {
+  if (isEdit && !navigator.isCoords) return <ProfileSkeletonForm />;
+  if (isEdit && navigator?.errorPosition) {
     return (
       <ErrorBoundary
         i18n={i18n}
