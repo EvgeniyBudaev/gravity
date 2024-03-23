@@ -161,11 +161,10 @@ go get -u github.com/gookit/goutil
 ```
 
 go-webp Сжатие изображений
-
+https://github.com/h2non/bim
 ```
-sudo apt-get update
-sudo apt-get install libwebp-dev
-go get -u github.com/kolesa-team/go-webp
+sudo apt install libvips-dev
+go get -u github.com/h2non/bimg
 ```
 
 Запуск RabbitMQ
@@ -181,7 +180,41 @@ https://github.com/rabbitmq/rabbitmq-tutorials/tree/main/go
 go get github.com/rabbitmq/amqp091-go
 ```
 
+Stop process
+```
+sudo lsof -i :15672
+sudo lsof -i :5432
+sudo kill PID_number
+```
+
+PGAdmin
+https://www.pgadmin.org/download/pgadmin-4-apt/
+```
+sudo service postgresql restart
+sudo apt install postgresql
+sudo -i -u postgres
+psql
+\password postgres
+root
+```
+
 Docker
 ```
 sudo snap install docker
+```
+```
+docker-compose up -d rabbitmq
+docker-compose up -d postgres
+docker-compose up -d server-service
+docker-compose up -d client-service
+```
+
+```
+docker-compose stop postgres
+docker exec -it a87c0fc7d44a  psql -U postgres -c "CREATE DATABASE tgbot;" // контейнер postgres должен быть запущен
+docker run --name=infra_postgres_1 -e POSTGRES_PASSWORD='root' -p 5432:5432 -d --rm postgres
+ls -l /home/ebudaev/Documents/Others/MyProjects/gravity/infra/db-data/postgres/migrations
+sudo mkdir ./db-data/postgres/migrations
+sudo migrate -path ./db-data/postgres/migrations -database "postgres://postgres:5432/tgbot?sslmode=disable&user=postgres&password=root" up
+sudo migrate -path ./db-data/postgres/migrations -database "postgres://postgres:root@postgres:5432/tgbot?sslmode=disable&user=postgres&password=root" up
 ```
