@@ -26,6 +26,7 @@ type Config struct {
 	ClientId            string `envconfig:"KEYCLOAK_CLIENT_ID"`
 	ClientSecret        string `envconfig:"KEYCLOAK_CLIENT_SECRET"`
 	RealmRS256PublicKey string `envconfig:"KEYCLOAK_REALM_RS256_PUBLIC_KEY"`
+	TelegramBotToken    string `envconfig:"TELEGRAM_BOT_TOKEN"`
 }
 
 func Load(l logger.Logger) (*Config, error) {

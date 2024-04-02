@@ -34,7 +34,7 @@ func printIntro(chatId int64) {
 		" чтобы перейти на главную страницу приложения")
 }
 
-func (app *App) StartHTTPServer() error {
+func (app *App) StartBot() error {
 	// Telegram Bot
 	if bot, err = tgbotapi.NewBotAPI(app.config.TelegramBotToken); err != nil {
 		log.Panic(err)

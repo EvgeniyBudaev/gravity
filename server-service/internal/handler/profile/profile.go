@@ -1565,46 +1565,52 @@ func (h *HandlerProfile) GetReviewListHandler() fiber.Handler {
 func (h *HandlerProfile) AddLikeHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("POST /api/v1/like/add")
-		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
-		defer cancel()
+		//ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
+		//defer cancel()
 		req := profile.RequestAddLike{}
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func AddLikeHandler, method BodyParser by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
 			return r.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		humanID, err := strconv.ParseUint(req.HumanID, 10, 64)
-		if err != nil {
-			h.logger.Debug("error func AddLikeHandler, method ParseUint by path "+
-				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
-		}
-		p, err := h.uc.FindBySessionID(ctx, req.SessionID)
-		if err != nil {
-			h.logger.Debug("error func AddLikeHandler, method FindByKeycloakID by path "+
-				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
-		}
-		err = h.uc.UpdateLastOnline(ctx, p.ID)
-		if err != nil {
-			h.logger.Debug("error func AddLikeHandler, method UpdateLastOnline by path"+
-				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
-		}
-		likeDto := &profile.LikeProfile{
-			ProfileID: p.ID,
-			HumanID:   humanID,
-			IsLiked:   true,
-			CreatedAt: time.Now().UTC(),
-			UpdatedAt: time.Now().UTC(),
-		}
-		like, err := h.uc.AddLike(ctx, likeDto)
-		if err != nil {
-			h.logger.Debug("error func AddLikeHandler, method AddLike by path"+
-				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
-		}
-		return r.WrapCreated(ctf, like)
+
+		go func() {
+			h.uc.Hub.Broadcast <- req.SessionID
+		}()
+
+		//humanID, err := strconv.ParseUint(req.HumanID, 10, 64)
+		//if err != nil {
+		//	h.logger.Debug("error func AddLikeHandler, method ParseUint by path "+
+		//		" internal/handler/profile/profile.go", zap.Error(err))
+		//	return r.WrapError(ctf, err, http.StatusBadRequest)
+		//}
+		//p, err := h.uc.FindBySessionID(ctx, req.SessionID)
+		//if err != nil {
+		//	h.logger.Debug("error func AddLikeHandler, method FindByKeycloakID by path "+
+		//		" internal/handler/profile/profile.go", zap.Error(err))
+		//	return r.WrapError(ctf, err, http.StatusBadRequest)
+		//}
+		//err = h.uc.UpdateLastOnline(ctx, p.ID)
+		//if err != nil {
+		//	h.logger.Debug("error func AddLikeHandler, method UpdateLastOnline by path"+
+		//		" internal/handler/profile/profile.go", zap.Error(err))
+		//	return r.WrapError(ctf, err, http.StatusBadRequest)
+		//}
+		//likeDto := &profile.LikeProfile{
+		//	ProfileID: p.ID,
+		//	HumanID:   humanID,
+		//	IsLiked:   true,
+		//	CreatedAt: time.Now().UTC(),
+		//	UpdatedAt: time.Now().UTC(),
+		//}
+		//like, err := h.uc.AddLike(ctx, likeDto)
+		//if err != nil {
+		//	h.logger.Debug("error func AddLikeHandler, method AddLike by path"+
+		//		" internal/handler/profile/profile.go", zap.Error(err))
+		//	return r.WrapError(ctf, err, http.StatusBadRequest)
+		//}
+		//return r.WrapCreated(ctf, like)
+		return r.WrapCreated(ctf, nil)
 	}
 }
 

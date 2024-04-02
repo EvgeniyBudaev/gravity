@@ -2,6 +2,7 @@ package profile
 
 import (
 	"context"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity/hub"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity/profile"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/logger"
 	"go.uber.org/zap"
@@ -59,12 +60,14 @@ type Store interface {
 type UseCaseProfile struct {
 	logger      logger.Logger
 	profileRepo Store
+	Hub         *hub.Hub
 }
 
-func NewUseCaseProfile(l logger.Logger, pr Store) *UseCaseProfile {
+func NewUseCaseProfile(l logger.Logger, pr Store, h *hub.Hub) *UseCaseProfile {
 	return &UseCaseProfile{
 		logger:      l,
 		profileRepo: pr,
+		Hub:         h,
 	}
 }
 
