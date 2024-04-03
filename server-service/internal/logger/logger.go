@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -29,18 +28,4 @@ func NewLogger(level string) (Logger, error) {
 
 func GetDefaultLevel() string {
 	return "DEBUG"
-}
-
-// RequestLogger — middleware-логер для входящих HTTP-запросов
-func RequestLogger(logger Logger) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		// Логируем информацию о запросе
-		logger.Error("New request",
-			zap.String("method", c.Method()),
-			zap.String("path", c.Path()),
-		)
-
-		// Продолжаем обработку запроса
-		return c.Next()
-	}
 }

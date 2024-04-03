@@ -45,8 +45,6 @@ func NewApp() *App {
 	f := fiber.New(fiber.Config{
 		ReadBufferSize: 16384,
 	})
-	// Добавляем middleware логгера
-	f.Use(logger.RequestLogger(defaultLogger))
 	// CORS
 	f.Use(cors.New(cors.Config{
 		AllowOrigins: "*",
