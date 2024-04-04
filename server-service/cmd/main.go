@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/app"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity/hub"
 	"go.uber.org/zap"
@@ -17,7 +16,7 @@ func main() {
 	var wg sync.WaitGroup
 	application := app.NewApp()
 	h := hub.NewHub()
-	msgChan := make(chan string, 1) // msgChan - канал для передачи сообщений
+	msgChan := make(chan *hub.Content, 1) // msgChan - канал для передачи сообщений
 	wg.Add(1)
 	go func() {
 		if err := application.StartHTTPServer(ctx, h); err != nil {
@@ -43,7 +42,6 @@ func main() {
 					h.Broadcast = nil
 					continue
 				}
-				fmt.Println("hub message: ", c)
 				msgChan <- c
 			}
 		}

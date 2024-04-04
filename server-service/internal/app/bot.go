@@ -4,8 +4,9 @@ package app
 import (
 	"context"
 	"fmt"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity/hub"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"log"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -43,19 +44,17 @@ func printIntro(chatId int64) {
 }
 
 // StartBot - запускает бота
-func (app *App) StartBot(ctx context.Context, msgChan <-chan string) error {
+func (app *App) StartBot(ctx context.Context, msgChan <-chan *hub.Content) error {
 	var err error
 	// Telegram Bot
 	if bot, err = tgbotapi.NewBotAPI(app.config.TelegramBotToken); err != nil {
 		return err
 	}
 	bot.Debug = true
-	log.Printf("Authorized on account %s", bot.Self.UserName)
+	app.Logger.Info("Authorized on account:", zap.String("username", bot.Self.UserName))
 	updateConfig := tgbotapi.NewUpdate(0)
 	updateConfig.Timeout = UpdateConfigTimeout
 	updates := bot.GetUpdatesChan(updateConfig) // Получаем все обновления от пользователя
-
-	var content string
 
 	go func() {
 		for {
@@ -68,28 +67,23 @@ func (app *App) StartBot(ctx context.Context, msgChan <-chan string) error {
 					msgChan = nil
 					continue
 				}
-				fmt.Println("c: ", c)
-				content = c
+				fmt.Println("Message: ", c.Message)
+				msg := tgbotapi.NewMessage(int64(c.ChatID), c.Message)
+				_, err := bot.Send(msg)
+				if err != nil {
+					app.Logger.Debug("error func StartBot, method Send by path internal/app/bot.go", zap.Error(err))
+				}
 			}
 		}
 	}()
 
-	fmt.Println("content_1: ", content)
 	for update := range updates {
 		chatId := update.Message.Chat.ID
 		if isStartMessage(&update) {
 			userText := update.Message.Text // userText - сообщение, которое отправил пользователь
-			log.Printf("Начало общения: [%s] %s", update.Message.From.UserName, userText)
+			app.Logger.Info("Начало общения: ", zap.String("username", update.Message.From.UserName),
+				zap.String("message", userText))
 			printIntro(chatId)
-		}
-
-		fmt.Println("content_2: ", content)
-		if content != "" {
-			fmt.Println("content_3: ", content)
-			msg := tgbotapi.NewMessage(chatId, content)
-			if _, err = bot.Send(msg); err != nil {
-				return err
-			}
 		}
 
 		//if update.Message != nil {

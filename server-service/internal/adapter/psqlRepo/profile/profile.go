@@ -297,13 +297,12 @@ func (r *RepositoryProfile) SelectList(
 func (r *RepositoryProfile) AddTelegram(
 	ctx context.Context, p *profile.TelegramProfile) (*profile.TelegramProfile, error) {
 	query := "INSERT INTO profile_telegram (profile_id, telegram_id, username, first_name, last_name, language_code," +
-		" allows_write_to_pm, query_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id"
+		" allows_write_to_pm, query_id, chat_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id"
 	err := r.db.QueryRowContext(ctx, query, &p.ProfileID, &p.TelegramID, &p.UserName, &p.Firstname, &p.Lastname,
-		&p.LanguageCode, &p.AllowsWriteToPm, &p.QueryID).Scan(&p.ID)
+		&p.LanguageCode, &p.AllowsWriteToPm, &p.QueryID, &p.ChatID).Scan(&p.ID)
 	if err != nil {
-		r.logger.Debug(
-			"error func AddTelegram, method QueryRowContext by path internal/adapter/psqlRepo/profile/profile.go",
-			zap.Error(err))
+		r.logger.Debug("error func AddTelegram, method QueryRowContext by path"+
+			" internal/adapter/psqlRepo/profile/profile.go", zap.Error(err))
 		return nil, err
 	}
 	return p, nil
@@ -341,9 +340,9 @@ func (r *RepositoryProfile) DeleteTelegram(
 	}
 	defer tx.Rollback()
 	query := "UPDATE profile_telegram SET telegram_id=$1, username=$2, first_name=$3, last_name=$4, language_code=$5," +
-		" allows_write_to_pm=$6, query_id=$7 WHERE id=$8"
+		" allows_write_to_pm=$6, query_id=$7, chat_id=$8 WHERE id=$9"
 	_, err = r.db.ExecContext(ctx, query, &p.TelegramID, &p.UserName, &p.Firstname, &p.Lastname, &p.LanguageCode,
-		&p.AllowsWriteToPm, &p.QueryID, &p.ID)
+		&p.AllowsWriteToPm, &p.QueryID, &p.ChatID, &p.ID)
 	if err != nil {
 		r.logger.Debug("error func DeleteTelegram, method QueryRowContext by path"+
 			" internal/adapter/psqlRepo/profile/profile.go", zap.Error(err))
@@ -357,7 +356,7 @@ func (r *RepositoryProfile) FindTelegramByProfileID(
 	ctx context.Context, profileID uint64) (*profile.TelegramProfile, error) {
 	p := profile.TelegramProfile{}
 	query := `SELECT id, profile_id, telegram_id, username, first_name, last_name, language_code, allows_write_to_pm,
-       query_id
+       query_id, chat_id
 			  FROM profile_telegram
 			  WHERE profile_id = $1`
 	row := r.db.QueryRowContext(ctx, query, profileID)
@@ -368,7 +367,7 @@ func (r *RepositoryProfile) FindTelegramByProfileID(
 		return nil, err
 	}
 	err := row.Scan(&p.ID, &p.ProfileID, &p.TelegramID, &p.UserName, &p.Firstname, &p.Lastname, &p.LanguageCode,
-		&p.AllowsWriteToPm, &p.QueryID)
+		&p.AllowsWriteToPm, &p.QueryID, &p.ChatID)
 	if err != nil {
 		r.logger.Debug("error func FindTelegramByProfileID, method Scan by path"+
 			" internal/adapter/psqlRepo/profile/profile.go", zap.Error(err))
@@ -907,10 +906,10 @@ func (r *RepositoryProfile) SelectReviewList(
 }
 
 func (r *RepositoryProfile) AddLike(ctx context.Context, p *profile.LikeProfile) (*profile.LikeProfile, error) {
-	query := `INSERT INTO profile_likes (profile_id, human_id, is_liked, created_at, updated_at)
+	query := `INSERT INTO profile_likes (profile_id, likedUser_id, is_liked, created_at, updated_at)
 			  VALUES ($1, $2, $3, $4, $5)
 			  RETURNING id`
-	err := r.db.QueryRowContext(ctx, query, &p.ProfileID, &p.HumanID, &p.IsLiked, &p.CreatedAt,
+	err := r.db.QueryRowContext(ctx, query, &p.ProfileID, &p.LikedUserID, &p.IsLiked, &p.CreatedAt,
 		&p.UpdatedAt).Scan(&p.ID)
 	if err != nil {
 		r.logger.Debug("error func AddLike, method QueryRowContext by path"+
@@ -929,9 +928,9 @@ func (r *RepositoryProfile) UpdateLike(ctx context.Context, p *profile.LikeProfi
 	}
 	defer tx.Rollback()
 	query := `UPDATE profile_likes
-			  SET profile_id=$1, human_id=$2, is_liked=$3, created_at=$4, updated_at=$5
+			  SET profile_id=$1, likedUser_id=$2, is_liked=$3, created_at=$4, updated_at=$5
 			  WHERE id=$6`
-	_, err = r.db.ExecContext(ctx, query, &p.ProfileID, &p.HumanID, &p.IsLiked, &p.CreatedAt, &p.UpdatedAt, &p.ID)
+	_, err = r.db.ExecContext(ctx, query, &p.ProfileID, &p.LikedUserID, &p.IsLiked, &p.CreatedAt, &p.UpdatedAt, &p.ID)
 	if err != nil {
 		r.logger.Debug("error func UpdateLike, method ExecContext by path"+
 			" internal/adapter/psqlRepo/profile/profile.go", zap.Error(err))
@@ -950,9 +949,9 @@ func (r *RepositoryProfile) DeleteLike(ctx context.Context, p *profile.LikeProfi
 	}
 	defer tx.Rollback()
 	query := `UPDATE profile_likes
-			  SET profile_id=$1, human_id=$2, is_liked=$3, created_at=$4, updated_at=$5
+			  SET profile_id=$1, likedUser_id=$2, is_liked=$3, created_at=$4, updated_at=$5
 			  WHERE id=$6`
-	_, err = r.db.ExecContext(ctx, query, &p.ProfileID, &p.HumanID, &p.IsLiked, &p.CreatedAt, &p.UpdatedAt, &p.ID)
+	_, err = r.db.ExecContext(ctx, query, &p.ProfileID, &p.LikedUserID, &p.IsLiked, &p.CreatedAt, &p.UpdatedAt, &p.ID)
 	if err != nil {
 		r.logger.Debug("error func DeleteLike, method ExecContext by path"+
 			" internal/adapter/psqlRepo/profile/profile.go", zap.Error(err))
@@ -962,19 +961,19 @@ func (r *RepositoryProfile) DeleteLike(ctx context.Context, p *profile.LikeProfi
 	return p, nil
 }
 
-func (r *RepositoryProfile) FindLikeByHumanID(
-	ctx context.Context, profileID uint64, humanID uint64) (*profile.LikeProfile, bool, error) {
+func (r *RepositoryProfile) FindLikeByLikedUserID(
+	ctx context.Context, profileID uint64, likedUserID uint64) (*profile.LikeProfile, bool, error) {
 	p := profile.LikeProfile{}
-	query := `SELECT id, profile_id, human_id, is_liked, created_at, updated_at
+	query := `SELECT id, profile_id, likedUser_id, is_liked, created_at, updated_at
 			  FROM profile_likes
-			  WHERE profile_id=$1 AND human_id = $2`
-	err := r.db.QueryRowContext(ctx, query, profileID, humanID).
-		Scan(&p.ID, &p.ProfileID, &p.HumanID, &p.IsLiked, &p.CreatedAt, &p.UpdatedAt)
+			  WHERE profile_id=$1 AND likedUser_id = $2`
+	err := r.db.QueryRowContext(ctx, query, profileID, likedUserID).
+		Scan(&p.ID, &p.ProfileID, &p.LikedUserID, &p.IsLiked, &p.CreatedAt, &p.UpdatedAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, false, nil
 		}
-		r.logger.Debug("error func FindLikeByHumanID, method Scan by path"+
+		r.logger.Debug("error func FindLikeByLikedUserID, method Scan by path"+
 			" internal/adapter/psqlRepo/profile/profile.go", zap.Error(err))
 		return nil, false, err
 	}
@@ -983,11 +982,11 @@ func (r *RepositoryProfile) FindLikeByHumanID(
 
 func (r *RepositoryProfile) FindLikeByID(ctx context.Context, id uint64) (*profile.LikeProfile, bool, error) {
 	p := profile.LikeProfile{}
-	query := `SELECT id, profile_id, human_id, is_liked, created_at, updated_at
+	query := `SELECT id, profile_id, likedUser_id, is_liked, created_at, updated_at
 			  FROM profile_likes
 			  WHERE id=$1`
 	err := r.db.QueryRowContext(ctx, query, id).
-		Scan(&p.ID, &p.ProfileID, &p.HumanID, &p.IsLiked, &p.CreatedAt, &p.UpdatedAt)
+		Scan(&p.ID, &p.ProfileID, &p.LikedUserID, &p.IsLiked, &p.CreatedAt, &p.UpdatedAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, false, nil

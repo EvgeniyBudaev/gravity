@@ -48,6 +48,7 @@ type RequestAddProfile struct {
 	LanguageCode     string    `json:"languageCode"`
 	AllowsWriteToPm  string    `json:"allowsWriteToPm"`
 	QueryID          string    `json:"queryId"`
+	ChatID           string    `json:"chatId"`
 	Latitude         string    `json:"latitude"`
 	Longitude        string    `json:"longitude"`
 	AgeFrom          string    `json:"ageFrom"`
@@ -77,6 +78,7 @@ type RequestUpdateProfile struct {
 	LanguageCode     string    `json:"languageCode"`
 	AllowsWriteToPm  string    `json:"allowsWriteToPm"`
 	QueryID          string    `json:"queryId"`
+	ChatID           string    `json:"chatId"`
 	Latitude         string    `json:"latitude"`
 	Longitude        string    `json:"longitude"`
 	AgeFrom          string    `json:"ageFrom"`
@@ -187,6 +189,7 @@ type TelegramProfile struct {
 	LanguageCode    string `json:"languageCode"`
 	AllowsWriteToPm bool   `json:"allowsWriteToPm"`
 	QueryID         string `json:"queryId"`
+	ChatID          uint64 `json:"chatId"`
 }
 
 type Point struct {
@@ -315,17 +318,19 @@ type RequestDeleteReview struct {
 }
 
 type LikeProfile struct {
-	ID        uint64    `json:"id"`
-	ProfileID uint64    `json:"profileId"`
-	HumanID   uint64    `json:"humanId"`
-	IsLiked   bool      `json:"isLiked"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	ID          uint64    `json:"id"`
+	ProfileID   uint64    `json:"profileId"`
+	LikedUserID uint64    `json:"likedUserId"`
+	IsLiked     bool      `json:"isLiked"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
 type RequestAddLike struct {
-	SessionID string `json:"sessionId"`
-	HumanID   string `json:"humanId"`
+	SessionID   string `json:"sessionId"`
+	LikedUserID string `json:"likedUserId"`
+	Message     string `json:"message"`
+	Username    string `json:"username"`
 }
 
 type RequestUpdateLike struct {

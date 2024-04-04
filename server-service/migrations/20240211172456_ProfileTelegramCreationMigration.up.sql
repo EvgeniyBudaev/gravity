@@ -8,5 +8,6 @@ CREATE TABLE profile_telegram (
                                   language_code VARCHAR,
                                   allows_write_to_pm BOOL,
                                   query_id VARCHAR,
+                                  chat_id BIGINT,
                                   CONSTRAINT fk_profile_id FOREIGN KEY (profile_id) REFERENCES profiles (id)
 );

@@ -46,7 +46,7 @@ type Store interface {
 	AddLike(ctx context.Context, p *profile.LikeProfile) (*profile.LikeProfile, error)
 	UpdateLike(ctx context.Context, p *profile.LikeProfile) (*profile.LikeProfile, error)
 	DeleteLike(ctx context.Context, p *profile.LikeProfile) (*profile.LikeProfile, error)
-	FindLikeByHumanID(ctx context.Context, profileID uint64, humanID uint64) (*profile.LikeProfile, bool, error)
+	FindLikeByLikedUserID(ctx context.Context, profileID uint64, humanID uint64) (*profile.LikeProfile, bool, error)
 	FindLikeByID(ctx context.Context, id uint64) (*profile.LikeProfile, bool, error)
 	AddBlock(ctx context.Context, p *profile.BlockedProfile) (*profile.BlockedProfile, error)
 	UpdateBlock(ctx context.Context, p *profile.BlockedProfile) (*profile.BlockedProfile, error)
@@ -437,11 +437,11 @@ func (u *UseCaseProfile) DeleteLike(ctx context.Context, p *profile.LikeProfile)
 	return response, nil
 }
 
-func (u *UseCaseProfile) FindLikeByHumanID(
+func (u *UseCaseProfile) FindLikeByLikedUserID(
 	ctx context.Context, profileID uint64, humanID uint64) (*profile.LikeProfile, bool, error) {
-	response, isExist, err := u.profileRepo.FindLikeByHumanID(ctx, profileID, humanID)
+	response, isExist, err := u.profileRepo.FindLikeByLikedUserID(ctx, profileID, humanID)
 	if err != nil {
-		u.logger.Debug("error func FindLikeByHumanID, method FindLikeByHumanID by path"+
+		u.logger.Debug("error func FindLikeByLikedUserID, method FindLikeByLikedUserID by path"+
 			" internal/useCase/profile/profile.go", zap.Error(err))
 		return nil, isExist, err
 	}

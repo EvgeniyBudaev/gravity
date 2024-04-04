@@ -3,6 +3,7 @@ package profile
 import (
 	"context"
 	"fmt"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity/hub"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity/profile"
 	errorDomain "github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http/api/v1/error"
 	r "github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http/api/v1/response"
@@ -197,6 +198,12 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 				" internal/handler/profile/profile.go", zap.Error(err))
 			return r.WrapError(ctf, err, http.StatusBadRequest)
 		}
+		chatID, err := strconv.ParseUint(req.ChatID, 10, 64)
+		if err != nil {
+			h.logger.Debug("error func AddProfileHandler, method ParseUint by path"+
+				" internal/handler/profile/profile.go", zap.Error(err))
+			return r.WrapError(ctf, err, http.StatusBadRequest)
+		}
 		telegramDto := &profile.TelegramProfile{
 			ProfileID:       newProfile.ID,
 			TelegramID:      telegramID,
@@ -206,6 +213,7 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 			LanguageCode:    req.LanguageCode,
 			AllowsWriteToPm: allowsWriteToPm,
 			QueryID:         req.QueryID,
+			ChatID:          chatID,
 		}
 		_, err = h.uc.AddTelegram(ctx, telegramDto)
 		if err != nil {
@@ -661,7 +669,7 @@ func (h *HandlerProfile) GetProfileDetailHandler() fiber.Handler {
 				" internal/handler/profile/profile.go", zap.Error(err))
 			return r.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		l, isExistLike, err := h.uc.FindLikeByHumanID(ctx, v.ID, profileID)
+		l, isExistLike, err := h.uc.FindLikeByLikedUserID(ctx, v.ID, profileID)
 		if err != nil {
 			h.logger.Debug("error func GetProfileDetailHandler, FindLikeByHumanID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
@@ -958,6 +966,12 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 				" internal/handler/profile/profile.go", zap.Error(err))
 			return r.WrapError(ctf, err, http.StatusBadRequest)
 		}
+		chatID, err := strconv.ParseUint(req.ChatID, 10, 64)
+		if err != nil {
+			h.logger.Debug("error func UpdateProfileHandler, method ParseUint roomIdStr by path"+
+				" internal/handler/profile/profile.go", zap.Error(err))
+			return r.WrapError(ctf, err, http.StatusBadRequest)
+		}
 		allowsWriteToPm, err := strconv.ParseBool(req.AllowsWriteToPm)
 		if err != nil {
 			h.logger.Debug("error func UpdateProfileHandler, method ParseBool roomIdStr by path"+
@@ -980,6 +994,7 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 			LanguageCode:    req.LanguageCode,
 			AllowsWriteToPm: allowsWriteToPm,
 			QueryID:         req.QueryID,
+			ChatID:          chatID,
 		}
 		f, err := h.uc.FindFilterByProfileID(ctx, profileUpdated.ID)
 		if err != nil {
@@ -1164,6 +1179,7 @@ func (h *HandlerProfile) DeleteProfileHandler() fiber.Handler {
 			LanguageCode:    "",
 			AllowsWriteToPm: false,
 			QueryID:         "",
+			ChatID:          0,
 		}
 		_, err = h.uc.DeleteTelegram(ctx, telegramDto)
 		if err != nil {
@@ -1565,20 +1581,26 @@ func (h *HandlerProfile) GetReviewListHandler() fiber.Handler {
 func (h *HandlerProfile) AddLikeHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("POST /api/v1/like/add")
-		//ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
-		//defer cancel()
-		req := profile.RequestAddLike{}
-		if err := ctf.BodyParser(&req); err != nil {
-			h.logger.Debug("error func AddLikeHandler, method BodyParser by path"+
-				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
-		}
 
 		go func() {
-			h.uc.Hub.Broadcast <- req.SessionID
+			h.uc.Hub.Broadcast <- &hub.Content{
+				ChatID:   1,
+				Type:     "like",
+				Message:  "Ты понравился",
+				Username: "@kira",
+			}
 		}()
+		return r.WrapCreated(ctf, nil)
 
-		//humanID, err := strconv.ParseUint(req.HumanID, 10, 64)
+		//ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
+		//defer cancel()
+		//req := profile.RequestAddLike{}
+		//if err := ctf.BodyParser(&req); err != nil {
+		//	h.logger.Debug("error func AddLikeHandler, method BodyParser by path"+
+		//		" internal/handler/profile/profile.go", zap.Error(err))
+		//	return r.WrapError(ctf, err, http.StatusBadRequest)
+		//}
+		//likedUserID, err := strconv.ParseUint(req.LikedUserID, 10, 64)
 		//if err != nil {
 		//	h.logger.Debug("error func AddLikeHandler, method ParseUint by path "+
 		//		" internal/handler/profile/profile.go", zap.Error(err))
@@ -1590,6 +1612,18 @@ func (h *HandlerProfile) AddLikeHandler() fiber.Handler {
 		//		" internal/handler/profile/profile.go", zap.Error(err))
 		//	return r.WrapError(ctf, err, http.StatusBadRequest)
 		//}
+		//telegramBySessionID, err := h.uc.FindTelegramByProfileID(ctx, p.ID)
+		//if err != nil {
+		//	h.logger.Debug("error func AddLikeHandler, method FindTelegramByProfileID by path "+
+		//		" internal/handler/profile/profile.go", zap.Error(err))
+		//	return r.WrapError(ctf, err, http.StatusBadRequest)
+		//}
+		//telegramByLikedUserID, err := h.uc.FindTelegramByProfileID(ctx, likedUserID)
+		//if err != nil {
+		//	h.logger.Debug("error func AddLikeHandler, method FindTelegramByProfileID by path "+
+		//		" internal/handler/profile/profile.go", zap.Error(err))
+		//	return r.WrapError(ctf, err, http.StatusBadRequest)
+		//}
 		//err = h.uc.UpdateLastOnline(ctx, p.ID)
 		//if err != nil {
 		//	h.logger.Debug("error func AddLikeHandler, method UpdateLastOnline by path"+
@@ -1597,11 +1631,11 @@ func (h *HandlerProfile) AddLikeHandler() fiber.Handler {
 		//	return r.WrapError(ctf, err, http.StatusBadRequest)
 		//}
 		//likeDto := &profile.LikeProfile{
-		//	ProfileID: p.ID,
-		//	HumanID:   humanID,
-		//	IsLiked:   true,
-		//	CreatedAt: time.Now().UTC(),
-		//	UpdatedAt: time.Now().UTC(),
+		//	ProfileID:   p.ID,
+		//	LikedUserID: likedUserID,
+		//	IsLiked:     true,
+		//	CreatedAt:   time.Now().UTC(),
+		//	UpdatedAt:   time.Now().UTC(),
 		//}
 		//like, err := h.uc.AddLike(ctx, likeDto)
 		//if err != nil {
@@ -1609,8 +1643,15 @@ func (h *HandlerProfile) AddLikeHandler() fiber.Handler {
 		//		" internal/handler/profile/profile.go", zap.Error(err))
 		//	return r.WrapError(ctf, err, http.StatusBadRequest)
 		//}
+		//go func() {
+		//	h.uc.Hub.Broadcast <- &hub.Content{
+		//		ChatID:   telegramByLikedUserID.ChatID,
+		//		Type:     "like",
+		//		Message:  req.Message,
+		//		Username: telegramBySessionID.UserName,
+		//	}
+		//}()
 		//return r.WrapCreated(ctf, like)
-		return r.WrapCreated(ctf, nil)
 	}
 }
 
@@ -1654,12 +1695,12 @@ func (h *HandlerProfile) DeleteLikeHandler() fiber.Handler {
 			return r.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		likeDto := &profile.LikeProfile{
-			ID:        likeID,
-			ProfileID: l.ProfileID,
-			HumanID:   l.HumanID,
-			IsLiked:   false,
-			CreatedAt: l.CreatedAt,
-			UpdatedAt: time.Now().UTC(),
+			ID:          likeID,
+			ProfileID:   l.ProfileID,
+			LikedUserID: l.LikedUserID,
+			IsLiked:     false,
+			CreatedAt:   l.CreatedAt,
+			UpdatedAt:   time.Now().UTC(),
 		}
 		like, err := h.uc.DeleteLike(ctx, likeDto)
 		if err != nil {
@@ -1711,12 +1752,12 @@ func (h *HandlerProfile) UpdateLikeHandler() fiber.Handler {
 			return r.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		likeDto := &profile.LikeProfile{
-			ID:        likeID,
-			ProfileID: l.ProfileID,
-			HumanID:   l.HumanID,
-			IsLiked:   true,
-			CreatedAt: l.CreatedAt,
-			UpdatedAt: time.Now().UTC(),
+			ID:          likeID,
+			ProfileID:   l.ProfileID,
+			LikedUserID: l.LikedUserID,
+			IsLiked:     true,
+			CreatedAt:   l.CreatedAt,
+			UpdatedAt:   time.Now().UTC(),
 		}
 		like, err := h.uc.UpdateLike(ctx, likeDto)
 		if err != nil {
