@@ -141,6 +141,10 @@ export async function editProfileAction(prevState: any, formData: FormData) {
       mapperParams.profileForm.queryId,
     );
     profileFormData.append(
+      EProfileEditFormFields.ChatId,
+      mapperParams.profileForm.chatId,
+    );
+    profileFormData.append(
       EProfileEditFormFields.Latitude,
       mapperParams.profileForm.latitude,
     );

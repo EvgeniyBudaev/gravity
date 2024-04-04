@@ -10,6 +10,8 @@ import { updateLikeAction } from "@/app/actions/like/update/updateLikeAction";
 import type { TProfileDetail } from "@/app/api/profile/detail";
 import { ProfileSidebar } from "@/app/entities/profile/profileSidebar";
 import { useTranslation } from "@/app/i18n/client";
+import { Block } from "@/app/pages/profilePage/block";
+import { Complaint } from "@/app/pages/profilePage/complaint";
 import {
   EAddLikeFormFields,
   ECancelLikeFormFields,
@@ -32,8 +34,6 @@ import { Icon } from "@/app/uikit/components/icon";
 import { Slider } from "@/app/uikit/components/slider";
 import { getFullYear } from "@/app/uikit/utils/date";
 import "./ProfilePage.scss";
-import { Block } from "@/app/pages/profilePage/block";
-import { Complaint } from "@/app/pages/profilePage/complaint";
 
 type TProps = {
   lng: ELanguage;
@@ -123,6 +123,12 @@ export const ProfilePage: FC<TProps> = ({ lng, profile }) => {
           keycloakSession?.user.id,
         );
         formDataDto.append(EAddLikeFormFields.HumanId, profile.id.toString());
+        const message = t("common.actions.like");
+        formDataDto.append(EAddLikeFormFields.Message, message);
+        formDataDto.append(
+          EAddLikeFormFields.Username,
+          profile.telegram?.username ?? "",
+        );
       }
       if (canCancelLike) {
         formDataDto.append(

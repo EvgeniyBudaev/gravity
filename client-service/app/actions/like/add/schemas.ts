@@ -8,7 +8,15 @@ export const addLikeFormSchema = zfd.formData({
     .string()
     .trim()
     .min(1, EMPTY_FIELD_ERROR_MESSAGE),
-  [EAddLikeFormFields.HumanId]: z
+  [EAddLikeFormFields.LikedUserId]: z
+    .string()
+    .trim()
+    .min(1, EMPTY_FIELD_ERROR_MESSAGE),
+  [EAddLikeFormFields.Message]: z
+    .string()
+    .trim()
+    .min(1, EMPTY_FIELD_ERROR_MESSAGE),
+  [EAddLikeFormFields.Username]: z
     .string()
     .trim()
     .min(1, EMPTY_FIELD_ERROR_MESSAGE),

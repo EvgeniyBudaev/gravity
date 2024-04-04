@@ -5,24 +5,25 @@ type TProps = {
   [EProfileEditFormFields.Id]: string;
   [EProfileEditFormFields.Username]: string;
   [EProfileEditFormFields.DisplayName]: string;
-  [EProfileEditFormFields.Email]?: string | null;
+  [EProfileEditFormFields.Email]: string | null | undefined;
   [EProfileEditFormFields.MobileNumber]: string;
   [EProfileEditFormFields.Birthday]: string;
   [EProfileEditFormFields.Gender]: string;
-  [EProfileEditFormFields.SearchGender]?: string | null;
-  [EProfileEditFormFields.Location]?: string | null;
-  [EProfileEditFormFields.Description]?: string | null;
-  [EProfileEditFormFields.Height]?: string | null;
-  [EProfileEditFormFields.Weight]?: string | null;
-  [EProfileEditFormFields.LookingFor]?: string | null;
-  [EProfileEditFormFields.Image]?: TFile | TFile[] | null;
+  [EProfileEditFormFields.SearchGender]: string | null | undefined;
+  [EProfileEditFormFields.Location]: string | null | undefined;
+  [EProfileEditFormFields.Description]: string | null | undefined;
+  [EProfileEditFormFields.Height]: string | null | undefined;
+  [EProfileEditFormFields.Weight]: string | null | undefined;
+  [EProfileEditFormFields.LookingFor]: string | null | undefined;
+  [EProfileEditFormFields.Image]: TFile | TFile[] | null | undefined;
   [EProfileEditFormFields.TelegramID]: string;
   [EProfileEditFormFields.TelegramUsername]: string;
-  [EProfileEditFormFields.FirstName]?: string | null;
-  [EProfileEditFormFields.LastName]?: string | null;
+  [EProfileEditFormFields.FirstName]: string | null | undefined;
+  [EProfileEditFormFields.LastName]: string | null | undefined;
   [EProfileEditFormFields.LanguageCode]: string;
   [EProfileEditFormFields.AllowsWriteToPm]: string;
   [EProfileEditFormFields.QueryId]: string;
+  [EProfileEditFormFields.ChatId]: string;
   [EProfileEditFormFields.Latitude]: string;
   [EProfileEditFormFields.Longitude]: string;
   [EProfileEditFormFields.AgeFrom]: string;
@@ -33,11 +34,11 @@ type TProps = {
 };
 
 type TUpdateForm = {
-  [EProfileEditFormFields.Email]?: string | null;
+  [EProfileEditFormFields.Email]: string | null | undefined;
   [EProfileEditFormFields.MobileNumber]: string;
   [EProfileEditFormFields.Username]: string;
-  [EProfileEditFormFields.FirstName]?: string | null;
-  [EProfileEditFormFields.LastName]?: string | null;
+  [EProfileEditFormFields.FirstName]: string | null | undefined;
+  [EProfileEditFormFields.LastName]: string | null | undefined;
 };
 
 type TProfileForm = {
@@ -46,20 +47,21 @@ type TProfileForm = {
   [EProfileEditFormFields.DisplayName]: string;
   [EProfileEditFormFields.Birthday]: string;
   [EProfileEditFormFields.Gender]: string;
-  [EProfileEditFormFields.SearchGender]?: string | null;
-  [EProfileEditFormFields.Location]?: string | null;
-  [EProfileEditFormFields.Description]?: string | null;
-  [EProfileEditFormFields.Height]?: string | null;
-  [EProfileEditFormFields.Weight]?: string | null;
-  [EProfileEditFormFields.LookingFor]?: string | null;
-  [EProfileEditFormFields.Image]?: TFile | TFile[] | null;
+  [EProfileEditFormFields.SearchGender]: string | null | undefined;
+  [EProfileEditFormFields.Location]: string | null | undefined;
+  [EProfileEditFormFields.Description]: string | null | undefined;
+  [EProfileEditFormFields.Height]: string | null | undefined;
+  [EProfileEditFormFields.Weight]: string | null | undefined;
+  [EProfileEditFormFields.LookingFor]: string | null | undefined;
+  [EProfileEditFormFields.Image]: TFile | TFile[] | null | undefined;
   [EProfileEditFormFields.TelegramID]: string;
   [EProfileEditFormFields.TelegramUsername]: string;
-  [EProfileEditFormFields.FirstName]?: string | null;
-  [EProfileEditFormFields.LastName]?: string | null;
+  [EProfileEditFormFields.FirstName]: string | null | undefined;
+  [EProfileEditFormFields.LastName]: string | null | undefined;
   [EProfileEditFormFields.LanguageCode]: string;
   [EProfileEditFormFields.AllowsWriteToPm]: string;
   [EProfileEditFormFields.QueryId]: string;
+  [EProfileEditFormFields.ChatId]: string;
   [EProfileEditFormFields.Latitude]: string;
   [EProfileEditFormFields.Longitude]: string;
   [EProfileEditFormFields.AgeFrom]: string;
@@ -98,6 +100,7 @@ export const mapUpdateToDto: TMapUpdateToDto = (props: TProps) => {
       [EProfileEditFormFields.LanguageCode]: props.languageCode,
       [EProfileEditFormFields.AllowsWriteToPm]: props.allowsWriteToPm,
       [EProfileEditFormFields.QueryId]: props.queryId,
+      [EProfileEditFormFields.ChatId]: props.chatId,
       [EProfileEditFormFields.Latitude]: props.latitude,
       [EProfileEditFormFields.Longitude]: props.longitude,
       [EProfileEditFormFields.AgeFrom]: props.ageFrom,

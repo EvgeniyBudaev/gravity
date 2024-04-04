@@ -25,6 +25,7 @@ export const useTelegram = () => {
 
   return {
     tg,
+    chatId: tg?.initDataUnsafe?.chat?.id,
     user: tg?.initDataUnsafe?.user,
     queryId: tg?.initDataUnsafe?.query_id,
   };

@@ -114,6 +114,10 @@ export const editProfileFormSchema = zfd
       .string()
       .trim()
       .min(1, EMPTY_FIELD_ERROR_MESSAGE),
+    [EProfileEditFormFields.ChatId]: z
+      .string()
+      .trim()
+      .min(1, EMPTY_FIELD_ERROR_MESSAGE),
     [EProfileEditFormFields.Latitude]: z
       .string()
       .trim()

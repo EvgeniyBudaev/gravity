@@ -69,7 +69,7 @@ export const ProfileForm: FC<TProps> = ({ isEdit, lng, profile }) => {
   const keycloakSession = session as TSession;
   const buttonSubmitRef = useRef<HTMLInputElement | null>(null);
   const navigator = useNavigator({ lng });
-  const { queryId, user } = useTelegram();
+  const { chatId, queryId, user } = useTelegram();
   const { i18n, t } = useTranslation("index");
   const language = lng as ELanguage;
   const location = isEdit
@@ -241,34 +241,35 @@ export const ProfileForm: FC<TProps> = ({ isEdit, lng, profile }) => {
     formDataDto.append(EProfileAddFormFields.Birthday, utcDate ?? "");
     formDataDto.append(
       EProfileAddFormFields.Gender,
-      gender?.value.toString() ?? "",
+      (gender?.value ?? "").toString(),
     );
     formDataDto.append(
       EProfileAddFormFields.SearchGender,
-      searchGender?.value.toString() ?? ESearchGender.All,
+      (searchGender?.value ?? ESearchGender.All).toString(),
     );
     formDataDto.append(
       EProfileAddFormFields.LookingFor,
-      lookingFor?.value.toString() ?? ELookingFor.All,
+      (lookingFor?.value ?? ELookingFor.All).toString(),
     );
     formDataDto.append(
       EProfileAddFormFields.TelegramID,
-      user?.id.toString() ?? "2",
+      user?.id.toString() ?? "0",
     );
     formDataDto.append(
       EProfileAddFormFields.TelegramUsername,
-      user?.username?.toString() ?? "b",
+      user?.username?.toString() ?? "-",
     );
-    formDataDto.append(EProfileAddFormFields.FirstName, firstName ?? "b");
-    formDataDto.append(EProfileAddFormFields.LastName, lastName ?? "b");
-    formDataDto.append(EProfileAddFormFields.QueryId, queryId ?? "2");
+    formDataDto.append(EProfileAddFormFields.FirstName, firstName ?? "-");
+    formDataDto.append(EProfileAddFormFields.LastName, lastName ?? "-");
+    formDataDto.append(EProfileAddFormFields.QueryId, queryId ?? "0");
+    formDataDto.append(EProfileAddFormFields.ChatId, chatId ?? "0");
     formDataDto.append(
       EProfileAddFormFields.LanguageCode,
       user?.language_code ?? "ru",
     );
     formDataDto.append(
       EProfileAddFormFields.AllowsWriteToPm,
-      user?.allows_write_to_pm?.toString() ?? "true",
+      (user?.allows_write_to_pm ?? "true").toString(),
     );
     formDataDto.append(EProfileAddFormFields.Latitude, latitude);
     formDataDto.append(EProfileAddFormFields.Longitude, longitude);

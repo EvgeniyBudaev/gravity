@@ -21,6 +21,7 @@ export enum EProfileAddFormFields {
   LanguageCode = "languageCode",
   AllowsWriteToPm = "allowsWriteToPm",
   QueryId = "queryId",
+  ChatId = "chatId",
   Latitude = "latitude",
   Longitude = "longitude",
   AgeFrom = "ageFrom",

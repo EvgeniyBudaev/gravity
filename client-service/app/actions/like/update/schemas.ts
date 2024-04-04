@@ -12,7 +12,7 @@ export const updateLikeFormSchema = zfd.formData({
     .string()
     .trim()
     .min(1, EMPTY_FIELD_ERROR_MESSAGE),
-  [EUpdateLikeFormFields.HumanId]: z
+  [EUpdateLikeFormFields.LikedUserId]: z
     .string()
     .trim()
     .min(1, EMPTY_FIELD_ERROR_MESSAGE),

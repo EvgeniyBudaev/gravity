@@ -34,7 +34,7 @@ export async function cancelLikeAction(prevState: any, formData: FormData) {
     const response = await cancelLike(formattedParams);
     const path = createPath({
       route: ERoutes.Profile,
-      params: { id: resolver?.data.humanId },
+      params: { id: resolver?.data?.likedUserId ?? "" },
     });
     revalidatePath(path);
     return {

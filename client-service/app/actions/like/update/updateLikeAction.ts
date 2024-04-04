@@ -33,7 +33,7 @@ export async function updateLikeAction(prevState: any, formData: FormData) {
   const isCancel = JSON.parse(formattedParams.isCancel);
   const paramsDto = {
     id: formattedParams.id,
-    humanId: formattedParams.humanId,
+    humanId: formattedParams.likedUserId,
   };
   try {
     const response = isCancel
@@ -41,7 +41,7 @@ export async function updateLikeAction(prevState: any, formData: FormData) {
       : await updateLike(paramsDto);
     const path = createPath({
       route: ERoutes.Profile,
-      params: { id: resolver?.data.humanId },
+      params: { id: resolver?.data?.likedUserId ?? "" },
     });
     revalidatePath(path);
     return {

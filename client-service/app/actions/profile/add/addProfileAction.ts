@@ -123,6 +123,10 @@ export async function addProfileAction(prevState: any, formData: FormData) {
         mapperParams.profileForm.queryId,
       );
       profileFormData.append(
+        EProfileAddFormFields.ChatId,
+        mapperParams.profileForm.chatId,
+      );
+      profileFormData.append(
         EProfileAddFormFields.Latitude,
         mapperParams.profileForm.latitude,
       );

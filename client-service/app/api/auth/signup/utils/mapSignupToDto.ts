@@ -4,26 +4,27 @@ import { TFile } from "@/app/shared/types/file";
 type TProps = {
   [EProfileAddFormFields.Username]: string;
   [EProfileAddFormFields.DisplayName]: string;
-  [EProfileAddFormFields.Email]?: string | null;
+  [EProfileAddFormFields.Email]: string | null | undefined;
   [EProfileAddFormFields.MobileNumber]: string;
   [EProfileAddFormFields.Password]: string;
   [EProfileAddFormFields.PasswordConfirm]: string;
   [EProfileAddFormFields.Birthday]: string;
   [EProfileAddFormFields.Gender]: string;
-  [EProfileAddFormFields.SearchGender]?: string | null;
-  [EProfileAddFormFields.Location]?: string | null;
+  [EProfileAddFormFields.SearchGender]: string;
+  [EProfileAddFormFields.Location]: string | null | undefined;
   [EProfileAddFormFields.Description]?: string | null;
-  [EProfileAddFormFields.Height]?: string | null;
-  [EProfileAddFormFields.Weight]?: string | null;
-  [EProfileAddFormFields.LookingFor]?: string | null;
+  [EProfileAddFormFields.Height]: string | null | undefined;
+  [EProfileAddFormFields.Weight]: string | null | undefined;
+  [EProfileAddFormFields.LookingFor]: string;
   [EProfileAddFormFields.Image]: TFile | TFile[];
   [EProfileAddFormFields.TelegramID]: string;
   [EProfileAddFormFields.TelegramUsername]: string;
-  [EProfileAddFormFields.FirstName]?: string | null;
-  [EProfileAddFormFields.LastName]?: string | null;
+  [EProfileAddFormFields.FirstName]: string | null | undefined;
+  [EProfileAddFormFields.LastName]: string | null | undefined;
   [EProfileAddFormFields.LanguageCode]: string;
   [EProfileAddFormFields.AllowsWriteToPm]: string;
   [EProfileAddFormFields.QueryId]: string;
+  [EProfileAddFormFields.ChatId]: string;
   [EProfileAddFormFields.Latitude]: string;
   [EProfileAddFormFields.Longitude]: string;
   [EProfileAddFormFields.AgeFrom]: string;
@@ -34,12 +35,12 @@ type TProps = {
 };
 
 type TSignupForm = {
-  [EProfileAddFormFields.Email]?: string | null;
+  [EProfileAddFormFields.Email]: string | null | undefined;
   [EProfileAddFormFields.MobileNumber]: string;
   [EProfileAddFormFields.Password]: string;
   [EProfileAddFormFields.Username]: string;
-  [EProfileAddFormFields.FirstName]?: string | null;
-  [EProfileAddFormFields.LastName]?: string | null;
+  [EProfileAddFormFields.FirstName]: string | null | undefined;
+  [EProfileAddFormFields.LastName]: string | null | undefined;
 };
 
 type TProfileForm = {
@@ -47,20 +48,21 @@ type TProfileForm = {
   [EProfileAddFormFields.DisplayName]: string;
   [EProfileAddFormFields.Birthday]: string;
   [EProfileAddFormFields.Gender]: string;
-  [EProfileAddFormFields.SearchGender]?: string | null;
-  [EProfileAddFormFields.Location]?: string | null;
-  [EProfileAddFormFields.Description]?: string | null;
-  [EProfileAddFormFields.Height]?: string | null;
-  [EProfileAddFormFields.Weight]?: string | null;
-  [EProfileAddFormFields.LookingFor]?: string | null;
+  [EProfileAddFormFields.SearchGender]: string;
+  [EProfileAddFormFields.Location]: string | null | undefined;
+  [EProfileAddFormFields.Description]: string | null | undefined;
+  [EProfileAddFormFields.Height]: string | null | undefined;
+  [EProfileAddFormFields.Weight]: string | null | undefined;
+  [EProfileAddFormFields.LookingFor]: string;
   [EProfileAddFormFields.Image]: TFile | TFile[];
   [EProfileAddFormFields.TelegramID]: string;
   [EProfileAddFormFields.TelegramUsername]: string;
-  [EProfileAddFormFields.FirstName]?: string | null;
-  [EProfileAddFormFields.LastName]?: string | null;
+  [EProfileAddFormFields.FirstName]: string | null | undefined;
+  [EProfileAddFormFields.LastName]: string | null | undefined;
   [EProfileAddFormFields.LanguageCode]: string;
   [EProfileAddFormFields.AllowsWriteToPm]: string;
   [EProfileAddFormFields.QueryId]: string;
+  [EProfileAddFormFields.ChatId]: string;
   [EProfileAddFormFields.Latitude]: string;
   [EProfileAddFormFields.Longitude]: string;
   [EProfileAddFormFields.AgeFrom]: string;
@@ -98,6 +100,7 @@ export const mapSignupToDto: TMapSignupToDto = (props: TProps) => {
       [EProfileAddFormFields.LanguageCode]: props.languageCode,
       [EProfileAddFormFields.AllowsWriteToPm]: props.allowsWriteToPm,
       [EProfileAddFormFields.QueryId]: props.queryId,
+      [EProfileAddFormFields.ChatId]: props.chatId,
       [EProfileAddFormFields.Latitude]: props.latitude,
       [EProfileAddFormFields.Longitude]: props.longitude,
       [EProfileAddFormFields.AgeFrom]: props.ageFrom,
