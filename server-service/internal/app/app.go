@@ -1,13 +1,19 @@
+// Package app - application module
 package app
 
 import (
+	"context"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/config"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity/hub"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/logger"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"go.uber.org/zap"
 	"log"
+	"sync"
 )
 
+// App - application structure
 type App struct {
 	Logger logger.Logger
 	config *config.Config
@@ -15,6 +21,7 @@ type App struct {
 	fiber  *fiber.App
 }
 
+// NewApp - application designer
 func NewApp() *App {
 	// Default logger
 	defaultLogger, err := logger.NewLogger(logger.GetDefaultLevel())
@@ -57,4 +64,41 @@ func NewApp() *App {
 		Logger: loggerLevel,
 		fiber:  f,
 	}
+}
+
+// Run - launching the application
+func (app *App) Run(ctx context.Context) {
+	var wg sync.WaitGroup
+	h := hub.NewHub()
+	msgChan := make(chan *hub.Content, 1) // msgChan - канал для передачи сообщений
+	wg.Add(1)
+	go func() {
+		if err := app.StartHTTPServer(ctx, h); err != nil {
+			app.Logger.Fatal("error func main, method StartHTTPServer by path cmd/main.go", zap.Error(err))
+		}
+		wg.Done()
+	}()
+	go func() {
+		if err := app.StartBot(ctx, msgChan); err != nil {
+			app.Logger.Fatal("error func main, method StartBot by path cmd/main.go", zap.Error(err))
+		}
+		wg.Done()
+	}()
+	wg.Add(1)
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				wg.Done()
+				return
+			case c, ok := <-h.Broadcast:
+				if !ok {
+					h.Broadcast = nil
+					continue
+				}
+				msgChan <- c
+			}
+		}
+	}()
+	wg.Wait()
 }

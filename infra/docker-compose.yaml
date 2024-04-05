@@ -9,7 +9,7 @@ services:
       mode: replicated
       replicas: 1
     env_file:
-      - ../server-service/.env
+      - ../server-service/.env.prod
     volumes:
       - ./db-data/postgres/:/var/lib/postgresql/data/
 
@@ -26,7 +26,7 @@ services:
     depends_on:
       - postgres
     env_file:
-      - ../server-service/.env
+      - ../server-service/.env.prod
 
   client-service:
     build:

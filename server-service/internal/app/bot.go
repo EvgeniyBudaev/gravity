@@ -1,4 +1,4 @@
-// Package app - Модуль для работы с телеграм ботом
+// Package app - module for working with telegram bot
 package app
 
 import (
@@ -17,33 +17,33 @@ const (
 	UpdateConfigTimeout = 60
 )
 
-// bot - телеграм бот
+// bot - telegram bot
 var bot *tgbotapi.BotAPI
 
-// isStartMessage - проверяет, что сообщение /start было отправлено
+// isStartMessage - checks that the /start message has been sent
 func isStartMessage(update *tgbotapi.Update) bool {
 	return update.Message != nil && update.Message.Text == "/start"
 }
 
-// delay - задержка
+// delay - delay
 func delay(seconds uint8) {
 	time.Sleep(time.Duration(seconds) * time.Second)
 }
 
-// printSystemMessageWithDelay - выводит системное сообщение с задержкой
+// printSystemMessageWithDelay - displays a system message with a delay
 func printSystemMessageWithDelay(chatId int64, delayInSec uint8, message string) {
 	bot.Send(tgbotapi.NewMessage(chatId, message))
 	delay(delayInSec)
 }
 
-// printIntro - выводит приветственное сообщение
+// printIntro - displays a welcome message
 func printIntro(chatId int64) {
 	printSystemMessageWithDelay(chatId, 1, "Привет! "+EmojiSunglasses)
 	printSystemMessageWithDelay(chatId, 5, "Нажми на кнопку App,"+
 		" чтобы перейти на главную страницу приложения")
 }
 
-// StartBot - запускает бота
+// StartBot - launches the bot
 func (app *App) StartBot(ctx context.Context, msgChan <-chan *hub.Content) error {
 	var err error
 	// Telegram Bot
