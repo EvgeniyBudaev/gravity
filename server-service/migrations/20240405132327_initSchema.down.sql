@@ -1,0 +1,12 @@
+DROP TABLE IF EXISTS profiles;
+DROP TYPE IF EXISTS gender_enum;
+DROP TYPE IF EXISTS search_gender_enum;
+DROP TYPE IF EXISTS looking_for_enum;
+DROP TABLE IF EXISTS profile_complaints;
+DROP TABLE IF EXISTS profile_telegram;
+DROP TABLE IF EXISTS profile_navigators;
+DROP TABLE IF EXISTS profile_images;
+DROP TABLE IF EXISTS profile_filters;
+DROP TABLE IF EXISTS profile_reviews;
+DROP TABLE IF EXISTS profile_likes;
+DROP TABLE IF EXISTS profile_blocks;

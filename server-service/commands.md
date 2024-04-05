@@ -68,15 +68,7 @@ sudo rm migrate.list
 Создание миграционного репозитория
 
 ```
-migrate create -ext sql -dir migrations ProfilesCreationMigration
-migrate create -ext sql -dir migrations ProfileFiltersCreationMigration
-migrate create -ext sql -dir migrations ProfileComplaintsCreationMigration
-migrate create -ext sql -dir migrations ProfileTelegramCreationMigration
-migrate create -ext sql -dir migrations ProfileNavigatorsCreationMigration
-migrate create -ext sql -dir migrations ProfileImagesCreationMigration
-migrate create -ext sql -dir migrations ProfileReviewsCreationMigration
-migrate create -ext sql -dir migrations ProfileLikesCreationMigration
-migrate create -ext sql -dir migrations ProfileBlocksCreationMigration
+migrate create -ext sql -dir migrations initSchema
 ```
 
 Создание up sql файлов
@@ -204,7 +196,6 @@ sudo snap install docker
 ```
 
 ```
-docker-compose up -d rabbitmq
 docker-compose up -d postgres
 docker-compose up -d server-service
 docker-compose up -d client-service
@@ -212,8 +203,11 @@ docker-compose up -d client-service
 
 ```
 docker-compose stop postgres
-docker exec -it a87c0fc7d44a  psql -U postgres -c "CREATE DATABASE tgbot;" // контейнер postgres должен быть запущен
+docker exec -it 3093871756a7 psql -U postgres -c "CREATE DATABASE tgbot;" // контейнер postgres должен быть запущен
 docker run --name=infra_postgres_1 -e POSTGRES_PASSWORD='root' -p 5432:5432 -d --rm postgres
+
+sudo migrate -path /migrations -database "postgres://postgres:5432/tgbot?sslmode=disable&user=postgres&password=root" up
+
 ls -l /home/ebudaev/Documents/Others/MyProjects/gravity/infra/db-data/postgres/migrations
 sudo mkdir ./db-data/postgres/migrations
 sudo migrate -path ./db-data/postgres/migrations -database "postgres://postgres:5432/tgbot?sslmode=disable&user=postgres&password=root" up

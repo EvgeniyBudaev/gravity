@@ -11,12 +11,13 @@ services:
     env_file:
       - ../server-service/.env.prod
     volumes:
-      - ./db-data/postgres/:/var/lib/postgresql/data/
+      - ../server-service/migrations/:/var/lib/postgresql/data/
 
   server-service:
     build:
       context: ../server-service
       dockerfile: ../server-service/server-service.dockerfile
+#    command: ./wait-for-postgres.sh postgres
     restart: always
     ports:
       - "8080:80"
@@ -27,6 +28,8 @@ services:
       - postgres
     env_file:
       - ../server-service/.env.prod
+#    volumes:
+#      - ../server-service/migrations/:./migrations/
 
   client-service:
     build:
