@@ -192,10 +192,6 @@ docker-compose up -d client-service
 docker-compose stop postgres
 ```
 
-```
-docker run -v /home/ebudaev/Documents/Others/MyProjects/gravity/server-service/migrations:/migrations --network host postgis/postgis:latest migrate/migrate -path=/migrations/ -database "postgresql://postgres:root@localhost:5432/tgbot?sslmode=disable" up
-```
-
 из директории migrations выполнить команду:
 ```
 docker run -v /home/ebudaev/Documents/Others/MyProjects/gravity/server-service/migrations:/migrations --network host migrate/migrate -path=/migrations/ -database "postgresql://postgres:root@localhost:5432/tgbot?sslmode=disable" up

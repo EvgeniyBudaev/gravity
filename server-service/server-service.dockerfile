@@ -14,12 +14,6 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o ./bin/serverApp ./cmd
 
-# Copy migrations
-#COPY ../server-service/migrations/ ./migrations/
-
-# make wait-for-postgres.sh executable
-#RUN chmod +x wait-for-postgres.sh
-
 FROM alpine:latest
 
 RUN apk --no-cache add vips
