@@ -32,20 +32,21 @@ services:
     env_file:
       - ../server-service/.env.prod
 
+  client-service:
+    container_name: client-service_container
+    build:
+      context: ../client-service
+      dockerfile: ../client-service/client-service.dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - /app
+      - /app/node_modules
+    depends_on:
+      - server-service
+    env_file:
+      - ../client-service/.env
+
 volumes:
   pgdata: {}
-
-#  client-service:
-#    build:
-#      context: ../client-service
-#      dockerfile: ../client-service/client-service.dockerfile
-#    restart: always
-#    ports:
-#      - "3000:3000"
-#    volumes:
-#      - /app
-#      - /app/node_modules
-#    depends_on:
-#      - server-service
-#    env_file:
-#      - ../client-service/.env

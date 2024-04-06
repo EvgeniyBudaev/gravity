@@ -262,7 +262,7 @@ export const ProfileForm: FC<TProps> = ({ isEdit, lng, profile }) => {
     formDataDto.append(EProfileAddFormFields.FirstName, firstName ?? "-");
     formDataDto.append(EProfileAddFormFields.LastName, lastName ?? "-");
     formDataDto.append(EProfileAddFormFields.QueryId, queryId ?? "0");
-    formDataDto.append(EProfileAddFormFields.ChatId, chatId ?? "0");
+    formDataDto.append(EProfileAddFormFields.ChatId, (chatId ?? 0).toString());
     formDataDto.append(
       EProfileAddFormFields.LanguageCode,
       user?.language_code ?? "ru",

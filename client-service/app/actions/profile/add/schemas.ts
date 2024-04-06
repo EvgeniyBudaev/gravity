@@ -58,8 +58,7 @@ export const addProfileFormSchema = zfd
         },
       ),
     [EProfileAddFormFields.SearchGender]: z
-      .enum([ESearchGender.Man, ESearchGender.Woman, ESearchGender.All, ""])
-      .nullish(),
+      .enum([ESearchGender.Man, ESearchGender.Woman, ESearchGender.All, ""]),
     [EProfileAddFormFields.Location]: z.string().trim().nullish(),
     [EProfileAddFormFields.Description]: z.string().trim().nullish(),
     [EProfileAddFormFields.Height]: z.string().trim().nullish(),
@@ -74,8 +73,7 @@ export const addProfileFormSchema = zfd
         ELookingFor.Sex,
         ELookingFor.All,
         "",
-      ])
-      .nullish(),
+      ]),
     [EProfileAddFormFields.Image]: imageFileSchema,
     [EProfileAddFormFields.TelegramID]: z
       .string()

@@ -4,23 +4,23 @@ import { TFile } from "@/app/shared/types/file";
 type TProps = {
   [EProfileAddFormFields.Username]: string;
   [EProfileAddFormFields.DisplayName]: string;
-  [EProfileAddFormFields.Email]: string | null | undefined;
+  [EProfileAddFormFields.Email]?: string | null | undefined;
   [EProfileAddFormFields.MobileNumber]: string;
   [EProfileAddFormFields.Password]: string;
   [EProfileAddFormFields.PasswordConfirm]: string;
   [EProfileAddFormFields.Birthday]: string;
   [EProfileAddFormFields.Gender]: string;
   [EProfileAddFormFields.SearchGender]: string;
-  [EProfileAddFormFields.Location]: string | null | undefined;
-  [EProfileAddFormFields.Description]?: string | null;
-  [EProfileAddFormFields.Height]: string | null | undefined;
-  [EProfileAddFormFields.Weight]: string | null | undefined;
+  [EProfileAddFormFields.Location]?: string | null | undefined;
+  [EProfileAddFormFields.Description]?: string | null | undefined;
+  [EProfileAddFormFields.Height]?: string | null | undefined;
+  [EProfileAddFormFields.Weight]?: string | null | undefined;
   [EProfileAddFormFields.LookingFor]: string;
   [EProfileAddFormFields.Image]: TFile | TFile[];
   [EProfileAddFormFields.TelegramID]: string;
   [EProfileAddFormFields.TelegramUsername]: string;
-  [EProfileAddFormFields.FirstName]: string | null | undefined;
-  [EProfileAddFormFields.LastName]: string | null | undefined;
+  [EProfileAddFormFields.FirstName]?: string | null | undefined;
+  [EProfileAddFormFields.LastName]?: string | null | undefined;
   [EProfileAddFormFields.LanguageCode]: string;
   [EProfileAddFormFields.AllowsWriteToPm]: string;
   [EProfileAddFormFields.QueryId]: string;
@@ -35,12 +35,12 @@ type TProps = {
 };
 
 type TSignupForm = {
-  [EProfileAddFormFields.Email]: string | null | undefined;
+  [EProfileAddFormFields.Email]?: string | null | undefined;
   [EProfileAddFormFields.MobileNumber]: string;
   [EProfileAddFormFields.Password]: string;
   [EProfileAddFormFields.Username]: string;
-  [EProfileAddFormFields.FirstName]: string | null | undefined;
-  [EProfileAddFormFields.LastName]: string | null | undefined;
+  [EProfileAddFormFields.FirstName]?: string | null | undefined;
+  [EProfileAddFormFields.LastName]?: string | null | undefined;
 };
 
 type TProfileForm = {
@@ -49,16 +49,16 @@ type TProfileForm = {
   [EProfileAddFormFields.Birthday]: string;
   [EProfileAddFormFields.Gender]: string;
   [EProfileAddFormFields.SearchGender]: string;
-  [EProfileAddFormFields.Location]: string | null | undefined;
-  [EProfileAddFormFields.Description]: string | null | undefined;
-  [EProfileAddFormFields.Height]: string | null | undefined;
-  [EProfileAddFormFields.Weight]: string | null | undefined;
+  [EProfileAddFormFields.Location]?: string | null | undefined;
+  [EProfileAddFormFields.Description]?: string | null | undefined;
+  [EProfileAddFormFields.Height]?: string | null | undefined;
+  [EProfileAddFormFields.Weight]?: string | null | undefined;
   [EProfileAddFormFields.LookingFor]: string;
   [EProfileAddFormFields.Image]: TFile | TFile[];
   [EProfileAddFormFields.TelegramID]: string;
   [EProfileAddFormFields.TelegramUsername]: string;
-  [EProfileAddFormFields.FirstName]: string | null | undefined;
-  [EProfileAddFormFields.LastName]: string | null | undefined;
+  [EProfileAddFormFields.FirstName]?: string | null | undefined;
+  [EProfileAddFormFields.LastName]?: string | null | undefined;
   [EProfileAddFormFields.LanguageCode]: string;
   [EProfileAddFormFields.AllowsWriteToPm]: string;
   [EProfileAddFormFields.QueryId]: string;
@@ -73,13 +73,15 @@ type TProfileForm = {
 };
 
 type TResponse = {
+  // profileForm: TProfileForm;
+  // signupForm: TSignupForm;
   profileForm: TProfileForm;
   signupForm: TSignupForm;
 };
 
 type TMapSignupToDto = (props: TProps) => TResponse;
 
-export const mapSignupToDto: TMapSignupToDto = (props: TProps) => {
+export const mapSignupToDto: TMapSignupToDto = (props) => {
   return {
     profileForm: {
       [EProfileAddFormFields.Username]: props.userName,
@@ -87,16 +89,16 @@ export const mapSignupToDto: TMapSignupToDto = (props: TProps) => {
       [EProfileAddFormFields.Birthday]: props.birthday,
       [EProfileAddFormFields.Gender]: props.gender,
       [EProfileAddFormFields.SearchGender]: props.searchGender,
-      [EProfileAddFormFields.Location]: props.location,
-      [EProfileAddFormFields.Description]: props.description,
-      [EProfileAddFormFields.Height]: props.height,
-      [EProfileAddFormFields.Weight]: props.weight,
+      [EProfileAddFormFields.Location]: props?.location ?? "",
+      [EProfileAddFormFields.Description]: props?.description ?? "",
+      [EProfileAddFormFields.Height]: props?.height ?? "0",
+      [EProfileAddFormFields.Weight]: props?.weight ?? "0",
       [EProfileAddFormFields.LookingFor]: props.lookingFor,
       [EProfileAddFormFields.Image]: props.image,
       [EProfileAddFormFields.TelegramID]: props.telegramId,
       [EProfileAddFormFields.TelegramUsername]: props.telegramUserName,
-      [EProfileAddFormFields.FirstName]: props.firstName,
-      [EProfileAddFormFields.LastName]: props.lastName,
+      [EProfileAddFormFields.FirstName]: props?.firstName ?? "",
+      [EProfileAddFormFields.LastName]: props?.lastName ?? "",
       [EProfileAddFormFields.LanguageCode]: props.languageCode,
       [EProfileAddFormFields.AllowsWriteToPm]: props.allowsWriteToPm,
       [EProfileAddFormFields.QueryId]: props.queryId,
@@ -110,12 +112,12 @@ export const mapSignupToDto: TMapSignupToDto = (props: TProps) => {
       [EProfileAddFormFields.Size]: props.size,
     },
     signupForm: {
-      [EProfileAddFormFields.Email]: props.email,
+      [EProfileAddFormFields.Email]: props?.email ?? "",
       [EProfileAddFormFields.MobileNumber]: props.mobileNumber,
       [EProfileAddFormFields.Password]: props.password,
       [EProfileAddFormFields.Username]: props.userName,
-      [EProfileAddFormFields.FirstName]: props.firstName,
-      [EProfileAddFormFields.LastName]: props.lastName,
+      [EProfileAddFormFields.FirstName]: props?.firstName ?? "",
+      [EProfileAddFormFields.LastName]: props?.lastName ?? "",
     },
   };
 };

@@ -54,7 +54,7 @@ export const ProfilePage: FC<TProps> = ({ lng, profile }) => {
     profile?.id && keycloakSession?.user.id === profile?.sessionId,
   );
   const isLiked = !isSessionUser && profile?.like?.isLiked;
-  const buttonSubmitRef = useRef<HTMLInputElement>(null);
+  const buttonSubmitRef = useRef<HTMLInputElement | null>(null);
   const [isShowTooltipHeart, setIsShowTooltipHeart] = useState(false);
 
   const canAddLike = useMemo(() => {
@@ -122,7 +122,7 @@ export const ProfilePage: FC<TProps> = ({ lng, profile }) => {
           EAddLikeFormFields.SessionId,
           keycloakSession?.user.id,
         );
-        formDataDto.append(EAddLikeFormFields.HumanId, profile.id.toString());
+        formDataDto.append(EAddLikeFormFields.LikedUserId, profile.id.toString());
         const message = t("common.actions.like");
         formDataDto.append(EAddLikeFormFields.Message, message);
         formDataDto.append(
@@ -137,7 +137,7 @@ export const ProfilePage: FC<TProps> = ({ lng, profile }) => {
         );
         formDataDto.append(ECancelLikeFormFields.IsCancel, "true");
         formDataDto.append(
-          ECancelLikeFormFields.HumanId,
+          ECancelLikeFormFields.LikedUserId,
           profile.id.toString(),
         );
       }
@@ -148,7 +148,7 @@ export const ProfilePage: FC<TProps> = ({ lng, profile }) => {
         );
         formDataDto.append(EUpdateLikeFormFields.IsCancel, "false");
         formDataDto.append(
-          EUpdateLikeFormFields.HumanId,
+          EUpdateLikeFormFields.LikedUserId,
           profile.id.toString(),
         );
       }
