@@ -159,19 +159,6 @@ sudo apt install libvips-dev
 go get -u github.com/h2non/bimg
 ```
 
-Запуск RabbitMQ
-```
-docker-compose up
-```
-15672 - порт админки
-5672 - порт RabbitMQ
-После запуска можем перейти в админку по адресу http://localhost:15672
-
-https://github.com/rabbitmq/rabbitmq-tutorials/tree/main/go
-```
-go get github.com/rabbitmq/amqp091-go
-```
-
 Stop process
 ```
 sudo lsof -i :15672
@@ -203,13 +190,13 @@ docker-compose up -d client-service
 
 ```
 docker-compose stop postgres
-docker exec -it 3093871756a7 psql -U postgres -c "CREATE DATABASE tgbot;" // контейнер postgres должен быть запущен
-docker run --name=infra_postgres_1 -e POSTGRES_PASSWORD='root' -p 5432:5432 -d --rm postgres
+```
 
-sudo migrate -path /migrations -database "postgres://postgres:5432/tgbot?sslmode=disable&user=postgres&password=root" up
+```
+docker run -v /home/ebudaev/Documents/Others/MyProjects/gravity/server-service/migrations:/migrations --network host postgis/postgis:latest migrate/migrate -path=/migrations/ -database "postgresql://postgres:root@localhost:5432/tgbot?sslmode=disable" up
+```
 
-ls -l /home/ebudaev/Documents/Others/MyProjects/gravity/infra/db-data/postgres/migrations
-sudo mkdir ./db-data/postgres/migrations
-sudo migrate -path ./db-data/postgres/migrations -database "postgres://postgres:5432/tgbot?sslmode=disable&user=postgres&password=root" up
-sudo migrate -path ./db-data/postgres/migrations -database "postgres://postgres:root@postgres:5432/tgbot?sslmode=disable&user=postgres&password=root" up
+из директории migrations выполнить команду:
+```
+docker run -v /home/ebudaev/Documents/Others/MyProjects/gravity/server-service/migrations:/migrations --network host migrate/migrate -path=/migrations/ -database "postgresql://postgres:root@localhost:5432/tgbot?sslmode=disable" up
 ```

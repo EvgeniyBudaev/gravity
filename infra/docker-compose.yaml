@@ -11,37 +11,40 @@ services:
     env_file:
       - ../server-service/.env.prod
     volumes:
-      - ../server-service/migrations/:/var/lib/postgresql/data/
+      - pgdata:/var/lib/postgresql/data/
 
-  server-service:
-    build:
-      context: ../server-service
-      dockerfile: ../server-service/server-service.dockerfile
-#    command: ./wait-for-postgres.sh postgres
-    restart: always
-    ports:
-      - "8080:80"
-    deploy:
-      mode: replicated
-      replicas: 1
-    depends_on:
-      - postgres
-    env_file:
-      - ../server-service/.env.prod
+#  server-service:
+#    build:
+#      context: ../server-service
+#      dockerfile: ../server-service/server-service.dockerfile
+##    command: ./wait-for-postgres.sh postgres
+#    restart: always
+#    ports:
+#      - "8080:80"
+#    deploy:
+#      mode: replicated
+#      replicas: 1
+#    depends_on:
+#      - postgres
+#    env_file:
+#      - ../server-service/.env.prod
 #    volumes:
 #      - ../server-service/migrations/:./migrations/
 
-  client-service:
-    build:
-      context: ../client-service
-      dockerfile: ../client-service/client-service.dockerfile
-    restart: always
-    ports:
-      - "3000:3000"
-    volumes:
-      - /app
-      - /app/node_modules
-    depends_on:
-      - server-service
-    env_file:
-      - ../client-service/.env
+volumes:
+  pgdata: {}
+
+#  client-service:
+#    build:
+#      context: ../client-service
+#      dockerfile: ../client-service/client-service.dockerfile
+#    restart: always
+#    ports:
+#      - "3000:3000"
+#    volumes:
+#      - /app
+#      - /app/node_modules
+#    depends_on:
+#      - server-service
+#    env_file:
+#      - ../client-service/.env

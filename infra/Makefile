@@ -1,6 +1,5 @@
 CLIENT_BINARY=clientApp
 SERVER_BINARY=serverApp
-BOT_BINARY=botApp
 
 ## up: starts all containers in the background without forcing build
 up:
@@ -27,10 +26,3 @@ build_server:
 	@echo "Building server binary..."
 	chdir ../server-service && set GOOS=linux && set GOARCH=amd64 && set CGO_ENABLED=0 && go build -o ./bin/${SERVER_BINARY} ./cmd
 	@echo "Done!"
-
-## build_bot: builds the bot binary as a linux executable
-build_bot:
-	@echo "Building bot binary..."
-	chdir ../bot-service && set GOOS=linux && set GOARCH=amd64 && set CGO_ENABLED=0 && go build -o ${BOT_BINARY} ./cmd
-	@echo "Done!"
-
