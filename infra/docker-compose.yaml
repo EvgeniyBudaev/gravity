@@ -2,9 +2,10 @@ version: "3"
 services:
   postgres:
     container_name: postgres_container
-    build:
-      context: ../postgres
-      dockerfile: ../postgres/postgres.dockerfile
+    image: postgis/postgis:14-3.4-alpine
+#    build:
+#      context: ../postgres
+#      dockerfile: ../postgres/postgres.dockerfile
     ports:
       - "5432:5432"
     restart: always
