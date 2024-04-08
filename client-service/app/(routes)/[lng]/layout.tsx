@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import type { ReactNode } from "react";
+import {Environment} from "@/app/environment";
 import { I18nContextProvider } from "@/app/i18n/context";
 import { InitClient } from "@/app/shared/components/init";
 import { Layout as LayoutComponent } from "@/app/shared/components/layout";
@@ -22,13 +23,16 @@ export default function RootLayout({
   children: ReactNode;
   params: { lng: ELanguage };
 }>) {
+  const isProduction = Environment.NODE_ENV === "production";
   return (
     <html lang={lng}>
       <head>
-        <Script
+        {isProduction && (
+          <Script
           src="https://telegram.org/js/telegram-web-app.js"
           strategy="beforeInteractive"
         />
+        )}
         <title>Love</title>
       </head>
       <SessionProviderWrapper>
@@ -36,7 +40,7 @@ export default function RootLayout({
           <I18nContextProvider lng={lng}>
             <InitClient />
             <ToastContainer />
-            <LayoutComponent lng={lng}>{children}</LayoutComponent>
+            <LayoutComponent isProduction={isProduction} lng={lng}>{children}</LayoutComponent>
           </I18nContextProvider>
         </body>
       </SessionProviderWrapper>

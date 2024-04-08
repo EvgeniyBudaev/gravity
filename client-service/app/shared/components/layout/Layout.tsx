@@ -13,10 +13,11 @@ import "./Layout.scss";
 
 type TProps = {
   children?: ReactNode;
+  isProduction: boolean;
   lng: ELanguage;
 };
 
-export const Layout: FC<TProps> = ({ children, lng }) => {
+export const Layout: FC<TProps> = ({ children, isProduction, lng }) => {
   const { data: session, status } = useSessionNext();
   const isSession = Boolean(session);
   const { tg } = useTelegram();
@@ -28,10 +29,12 @@ export const Layout: FC<TProps> = ({ children, lng }) => {
   const navigator = useNavigator({ lng });
 
   useEffect(() => {
-    tg?.ready();
-    // if (tg?.ready()) {
-    //   buttonSubmitRef.current && buttonSubmitRef.current.click();
-    // }
+    if (isProduction) {
+      tg?.ready();
+      if (tg?.ready()) {
+        buttonSubmitRef.current && buttonSubmitRef.current.click();
+      }
+    }
     if (isSession) {
       buttonSubmitRef.current && buttonSubmitRef.current.click();
     }
