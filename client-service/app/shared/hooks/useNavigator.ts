@@ -1,3 +1,5 @@
+"use client"
+
 import isNil from "lodash/isNil";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -48,17 +50,28 @@ export const useNavigator: TUseNavigator = ({ lng }) => {
     latitude: undefined,
   });
 
-  const fetchIPInfo = async (ipAddress: string) => {
-    try {
-      const response = await fetch(
-        `http://ip-api.com/json/${ipAddress}?lang=${lng}`,
-      );
-      const data = await response.json();
+  const fetchNavigatorCoords = async () => {
+    navigator.geolocation.getCurrentPosition(position => {
       setPositionIP({
         isCoords: true,
-        location: data?.city,
-        longitude: data?.lon,
-        latitude: data?.lat,
+        location: undefined,
+        longitude: position?.coords?.longitude,
+        latitude: position?.coords?.latitude,
+      });
+    });
+  }
+
+  const fetchIPInfo = async () => {
+    try {
+      const url = `https://geocode-maps.yandex.ru/1.x/?apikey=${process?.env?.NEXT_PUBLIC_YANDEX_API_KEY}&geocode=${positionIP?.longitude},${positionIP?.latitude}&format=json&lang=${lng}`
+      const res = await fetch(url)
+      const data = await res.json();
+      const city = data?.response?.GeoObjectCollection?.featureMember?.[0]?.GeoObject?.metaDataProperty?.GeocoderMetaData?.Address?.Components?.[4]?.name;
+      setPositionIP({
+        isCoords: true,
+        location:  city,
+        longitude: positionIP?.longitude,
+        latitude: positionIP?.latitude,
       });
     } catch (error) {
       setPositionIP({
@@ -76,7 +89,7 @@ export const useNavigator: TUseNavigator = ({ lng }) => {
       const ipData = await ipResponse.json();
       const ipAddress = ipData.ip;
       if (!ipAddress) return;
-      await fetchIPInfo(ipAddress);
+      await fetchNavigatorCoords();
     } catch (error) {
       setPositionIP({
         isCoords: false,
@@ -85,7 +98,7 @@ export const useNavigator: TUseNavigator = ({ lng }) => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [positionIP.isCoords]);
 
   const handlePositionChange = useCallback((position: GeolocationPosition) => {
     if (
@@ -109,6 +122,12 @@ export const useNavigator: TUseNavigator = ({ lng }) => {
       latitude: undefined,
     });
   }, []);
+
+  useEffect(() => {
+    if (positionIP.isCoords && !positionIP?.location) {
+      fetchIPInfo().then((r) => {});
+    }
+  }, [positionIP.isCoords, positionIP?.location]);
 
   useEffect(() => {
     if (positionGPS.isCoords) return;

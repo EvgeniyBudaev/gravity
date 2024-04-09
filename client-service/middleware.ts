@@ -65,7 +65,7 @@ export const getContentSecurityPolicy = (nonce?: string): string => {
     `style-src 'self' https: 'unsafe-inline'; ` +
     "base-uri 'self'; " +
     "child-src https://api-maps.yandex.ru 'self'; " +
-    `connect-src https://api.ipify.org http://ip-api.com https://api-maps.yandex.ru https://suggest-maps.yandex.ru https://*.maps.yandex.net https://yandex.ru https://*.taxi.yandex.net ${connect_src}; ` +
+    `connect-src https://geocode-maps.yandex.ru https://api.ipify.org https://api-maps.yandex.ru https://suggest-maps.yandex.ru https://*.maps.yandex.net https://yandex.ru https://*.taxi.yandex.net ${connect_src}; ` +
     "img-src 'self' blob: data: https://*.maps.yandex.net https://api-maps.yandex.ru https://yandex.ru;" +
     "font-src 'self' https: data:; " +
     "form-action 'self'; " +

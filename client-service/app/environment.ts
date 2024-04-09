@@ -8,6 +8,7 @@ export type EnvironmentType = {
 const { API_URL, NODE_ENV } = process.env;
 
 invariant(API_URL, "API_URL must be set in env file");
+invariant(NODE_ENV, "NODE_ENV must be set in env file");
 
 /**
  * Переменные окружения
