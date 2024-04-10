@@ -47,7 +47,7 @@ services:
     depends_on:
       - server-service
     env_file:
-      - ../client-service/.env
+      - ../client-service/.env.prod
 
 volumes:
   pgdata: {}

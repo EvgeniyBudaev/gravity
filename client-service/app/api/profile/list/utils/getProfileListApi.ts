@@ -10,10 +10,12 @@ export const getProfileListApi: TApiFunction<
   TProfileListResponse
 > = (params) => {
   const queryParams = {
+    ...params,
     ...(params?.latitude && { latitude: params?.latitude }),
     ...(params?.longitude && { longitude: params?.longitude }),
   };
   const url = `/api/v1/profile/list?${new URLSearchParams(queryParams)}`;
+
   return fetchApi<TProfileListResponse>(url, {
     method: EFormMethods.Get,
   });

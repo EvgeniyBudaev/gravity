@@ -57,14 +57,14 @@ async function mainLoader(params: TMainLoader) {
         ageTo: searchParams?.ageTo ?? DEFAULT_AGE_TO.toString(),
         searchGender: searchParams?.searchGender ?? DEFAULT_SEARCH_GENDER,
         lookingFor: searchParams?.lookingFor ?? DEFAULT_LOOKING_FOR,
-        sessionId: session?.user.id,
+        sessionId: session?.user.id ?? "",
         distance: searchParams?.distance ?? DEFAULT_DISTANCE.toString(),
         latitude: searchParams?.latitude ?? "",
         longitude: searchParams?.longitude ?? "",
       };
       const profileListResponse = await getProfileList(query);
       const profileResponse = await getProfileBySessionId({
-        sessionId: session?.user.id,
+        sessionId: session?.user.id ?? "",
         latitude: searchParams?.latitude ?? "",
         longitude: searchParams?.longitude ?? "",
       });

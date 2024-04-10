@@ -23,7 +23,7 @@ export default function RootLayout({
   children: ReactNode;
   params: { lng: ELanguage };
 }>) {
-  const isProduction = Environment.NODE_ENV === "production";
+  const isProduction = Environment?.NODE_ENV === "production";
   return (
     <html lang={lng}>
       <head>

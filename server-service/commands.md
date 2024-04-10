@@ -86,7 +86,7 @@ migrate -path migrations -database "postgres://localhost:5432/tgbot?sslmode=disa
 Если ошибка Dirty database version 1. Fix and force version
 
 ```
-migrate create -ext sql -dir migrations ProfilesCreationMigration force 20240210114558
+migrate create -ext sql -dir migrations initSchema force 20240410053939
 ```
 
 Fiber
@@ -155,6 +155,7 @@ go get -u github.com/gookit/goutil
 go-webp Сжатие изображений
 https://github.com/h2non/bim
 ```
+sudo apt-get update
 sudo apt install libvips-dev
 go get -u github.com/h2non/bimg
 ```
@@ -163,6 +164,7 @@ Stop process
 ```
 sudo lsof -i :15672
 sudo lsof -i :5432
+sudo lsof -i :3000
 sudo kill PID_number
 ```
 
