@@ -1,4 +1,4 @@
-CREATE TABLE profiles (
+CREATE TABLE IF NOT EXISTS profiles (
     id BIGSERIAL NOT NULL PRIMARY KEY,
     session_id VARCHAR NOT NULL UNIQUE,
     display_name VARCHAR(255),
@@ -18,7 +18,7 @@ CREATE TABLE profiles (
     last_online TIMESTAMP NOT NULL CHECK (last_online >= created_at)
 );
 
-CREATE TABLE profile_complaints (
+CREATE TABLE IF NOT EXISTS profile_complaints (
     id BIGSERIAL NOT NULL PRIMARY KEY,
     profile_id BIGINT NOT NULL,
     complaint_user_id BIGINT NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE profile_complaints (
     CONSTRAINT fk_profile_complaints_profile_id FOREIGN KEY (profile_id) REFERENCES profiles (id)
 );
 
-CREATE TABLE profile_telegram (
+CREATE TABLE IF NOT EXISTS profile_telegram (
     id BIGSERIAL NOT NULL PRIMARY KEY,
     profile_id BIGINT,
     telegram_id BIGINT,
@@ -44,14 +44,14 @@ CREATE TABLE profile_telegram (
 
 CREATE EXTENSION IF NOT EXISTS postgis;
 
-CREATE TABLE profile_navigators (
+CREATE TABLE IF NOT EXISTS profile_navigators (
     id BIGSERIAL NOT NULL PRIMARY KEY,
     profile_id BIGINT NOT NULL,
     location geometry(Point,  4326),
     CONSTRAINT fk_profile_navigators_profile_id FOREIGN KEY (profile_id) REFERENCES profiles (id)
 );
 
-CREATE TABLE profile_images (
+CREATE TABLE IF NOT EXISTS profile_images (
      id BIGSERIAL NOT NULL PRIMARY KEY,
      profile_id BIGINT NOT NULL,
      name VARCHAR(255),
@@ -66,7 +66,7 @@ CREATE TABLE profile_images (
      CONSTRAINT fk_profile_images_profile_id FOREIGN KEY (profile_id) REFERENCES profiles (id)
 );
 
-CREATE TABLE profile_filters (
+CREATE TABLE IF NOT EXISTS profile_filters (
      id BIGSERIAL NOT NULL PRIMARY KEY,
      profile_id BIGINT NOT NULL,
      search_gender VARCHAR(100),
@@ -79,7 +79,7 @@ CREATE TABLE profile_filters (
      CONSTRAINT fk_profile_filters_profile_id FOREIGN KEY (profile_id) REFERENCES profiles (id)
 );
 
-CREATE TABLE profile_reviews (
+CREATE TABLE IF NOT EXISTS profile_reviews (
      id BIGSERIAL NOT NULL PRIMARY KEY,
      profile_id BIGINT NOT NULL,
      message TEXT,
@@ -91,7 +91,7 @@ CREATE TABLE profile_reviews (
      CONSTRAINT fk_profile_reviews_profile_id FOREIGN KEY (profile_id) REFERENCES profiles (id)
 );
 
-CREATE TABLE profile_likes (
+CREATE TABLE IF NOT EXISTS profile_likes (
      id BIGSERIAL NOT NULL PRIMARY KEY,
      profile_id BIGINT NOT NULL,
      likedUser_id BIGINT NOT NULL,
@@ -101,7 +101,7 @@ CREATE TABLE profile_likes (
      CONSTRAINT fk_profile_likes_profile_id FOREIGN KEY (profile_id) REFERENCES profiles (id)
 );
 
-CREATE TABLE profile_blocks (
+CREATE TABLE IF NOT EXISTS profile_blocks (
      id BIGSERIAL NOT NULL PRIMARY KEY,
      profile_id BIGINT NOT NULL,
      blocked_user_id BIGINT NOT NULL,
