@@ -59,8 +59,8 @@ async function mainLoader(params: TMainLoader) {
         lookingFor: searchParams?.lookingFor ?? DEFAULT_LOOKING_FOR,
         sessionId: session?.user.id ?? "",
         distance: searchParams?.distance ?? DEFAULT_DISTANCE.toString(),
-        latitude: searchParams?.latitude ?? "",
-        longitude: searchParams?.longitude ?? "",
+        ...(searchParams?.latitude && { latitude: searchParams?.latitude }),
+        ...(searchParams?.longitude && { longitude: searchParams?.longitude }),
       };
       const profileListResponse = await getProfileList(query);
       const profileResponse = await getProfileBySessionId({

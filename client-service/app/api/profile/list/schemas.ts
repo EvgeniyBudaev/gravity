@@ -21,8 +21,8 @@ export const profileListParamsSchema = z.object({
   lookingFor: z.string(),
   sessionId: z.string(),
   distance: z.string(),
-  latitude: z.string().nullish(),
-  longitude: z.string().nullish(),
+  latitude: z.string().optional(),
+  longitude: z.string().optional(),
 });
 
 export const profileListSchema = paginationSchema.extend({
