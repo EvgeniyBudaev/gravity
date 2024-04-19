@@ -1,15 +1,13 @@
 version: "3"
+
 services:
   keycloak:
     container_name: keycloak_container
     image: quay.io/keycloak/keycloak:24.0.2
-#    build:
-#       context: ../keycloak
-#       dockerfile: ../keycloak/keycloak.dockerfile
     ports:
-      - "8081:8081"
+      - "8181:8080"
     env_file:
-      - ../server-service/.env.prod
+      - ./.env.prod
     command: ["start-dev"]
 
   postgres:
@@ -25,7 +23,7 @@ services:
       mode: replicated
       replicas: 1
     env_file:
-      - ../server-service/.env.prod
+      - ./.env.prod
     volumes:
       - pgdata:/var/lib/postgresql/data/
 
@@ -42,8 +40,9 @@ services:
       replicas: 1
     depends_on:
       - postgres
+      - keycloak
     env_file:
-      - ../server-service/.env.prod
+      - ./.env.prod
 
   client-service:
     container_name: client-service_container
@@ -58,8 +57,9 @@ services:
       - /app/node_modules
     depends_on:
       - server-service
+      - keycloak
     env_file:
-      - ../client-service/.env.prod
+      - ./.env.prod
 
 volumes:
   pgdata: {}
