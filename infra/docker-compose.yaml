@@ -8,14 +8,13 @@ services:
       - "8181:8080"
     env_file:
       - ./.env.prod
+    volumes:
+      - keycloakdata:/opt/keycloak/data/
     command: ["start-dev"]
 
   postgres:
     container_name: postgres_container
     image: postgis/postgis:14-3.4-alpine
-#    build:
-#      context: ../postgres
-#      dockerfile: ../postgres/postgres.dockerfile
     ports:
       - "5432:5432"
     restart: always
@@ -63,3 +62,4 @@ services:
 
 volumes:
   pgdata: {}
+  keycloakdata: {}
