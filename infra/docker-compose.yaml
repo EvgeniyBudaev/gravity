@@ -33,13 +33,12 @@ services:
       dockerfile: ../server-service/server-service.dockerfile
     restart: always
     ports:
-      - "8080:80"
+      - "8080:8080"
     deploy:
       mode: replicated
       replicas: 1
     depends_on:
       - postgres
-      - keycloak
     env_file:
       - ./.env.prod
 
@@ -56,7 +55,6 @@ services:
       - /app/node_modules
     depends_on:
       - server-service
-      - keycloak
     env_file:
       - ./.env.prod
 
