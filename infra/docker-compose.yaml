@@ -10,6 +10,9 @@ services:
       - ./.env.prod
     volumes:
       - keycloakdata:/opt/keycloak/data/
+    networks:
+      - backend
+      - frontend
     command: ["start-dev"]
 
   postgres:
@@ -25,6 +28,8 @@ services:
       - ./.env.prod
     volumes:
       - pgdata:/var/lib/postgresql/data/
+    networks:
+      - backend
 
   server-service:
     container_name: server-service_container
@@ -39,8 +44,11 @@ services:
       replicas: 1
     depends_on:
       - postgres
+      - keycloak
     env_file:
       - ./.env.prod
+    networks:
+      - backend
 
   client-service:
     container_name: client-service_container
@@ -55,9 +63,18 @@ services:
       - /app/node_modules
     depends_on:
       - server-service
+      - keycloak
     env_file:
       - ./.env.prod
+    networks:
+      - frontend
 
 volumes:
-  pgdata: {}
-  keycloakdata: {}
+  pgdata:
+  keycloakdata:
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
