@@ -6,13 +6,13 @@ import (
 )
 
 type Logger interface {
-	Debug(string, ...zapcore.Field)
-	Info(string, ...zapcore.Field)
-	Error(string, ...zapcore.Field)
-	Fatal(string, ...zapcore.Field)
+	Debug(msg string, fields ...zapcore.Field)
+	Info(msg string, fields ...zapcore.Field)
+	Error(msg string, fields ...zapcore.Field)
+	Fatal(msg string, fields ...zapcore.Field)
 }
 
-func NewLogger(level string) (Logger, error) {
+func New(level string) (Logger, error) {
 	lvl, err := zap.ParseAtomicLevel(level)
 	if err != nil {
 		return nil, err

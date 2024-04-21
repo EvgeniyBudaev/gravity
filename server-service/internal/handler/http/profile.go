@@ -1,14 +1,12 @@
-package profile
+package http
 
 import (
 	"context"
 	"fmt"
-	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity/hub"
-	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity/profile"
-	errorDomain "github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http/api/v1/error"
-	r "github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http/api/v1/response"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity"
+	api "github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http/api/v1"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/logger"
-	profileUseCase "github.com/EvgeniyBudaev/gravity/server-service/internal/useCase/profile"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/usecases"
 	"github.com/gofiber/fiber/v2"
 	"github.com/h2non/bimg"
 	"github.com/pkg/errors"
@@ -23,27 +21,27 @@ import (
 	"time"
 )
 
-type HandlerProfile struct {
+type ProfileHandler struct {
 	logger logger.Logger
-	uc     *profileUseCase.UseCaseProfile
+	uc     *usecases.ProfileUseCases
 }
 
 const TimeoutDuration = 30 * time.Second
 
-func NewHandlerProfile(l logger.Logger, uc *profileUseCase.UseCaseProfile) *HandlerProfile {
-	return &HandlerProfile{logger: l, uc: uc}
+func NewProfileHandler(l logger.Logger, uc *usecases.ProfileUseCases) *ProfileHandler {
+	return &ProfileHandler{logger: l, uc: uc}
 }
 
-func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
+func (h *ProfileHandler) AddProfileHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("POST /api/v1/profile/add")
 		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
 		defer cancel()
-		req := profile.RequestAddProfile{}
+		req := entity.RequestAddProfile{}
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func AddProfileHandler, method BodyParser by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		filePath := fmt.Sprintf("static/uploads/profile/%s/images/defaultImage.jpg", req.UserName)
 		directoryPath := fmt.Sprintf("static/uploads/profile/%s/images", req.UserName)
@@ -51,30 +49,30 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 			if err := os.MkdirAll(directoryPath, 0755); err != nil {
 				h.logger.Debug("error func AddProfileHandler, method MkdirAll by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 		}
 		form, err := ctf.MultipartForm()
 		if err != nil {
 			h.logger.Debug("error func AddProfileHandler, method MultipartForm by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		imageFiles := form.File["image"]
 		imagesFilePath := make([]string, 0, len(imageFiles))
-		imagesProfile := make([]*profile.ImageProfile, 0, len(imagesFilePath))
+		imagesProfile := make([]*entity.ImageProfile, 0, len(imagesFilePath))
 		for _, file := range imageFiles {
 			filePath = fmt.Sprintf("%s/%s", directoryPath, file.Filename)
 			if err := ctf.SaveFile(file, filePath); err != nil {
 				h.logger.Debug("error func AddProfileHandler, method SaveFile by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			fileImage, err := os.Open(filePath)
 			if err != nil {
 				h.logger.Debug("error func AddProfileHandler, method os.Open by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			// The Decode function is used to read images from a file or other source and convert them into an image.
 			// Image structure
@@ -82,7 +80,7 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func AddProfileHandler, method jpeg.Decode by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			newFileName := replaceExtension(file.Filename)
 			newFilePath := fmt.Sprintf("%s/%s", directoryPath, newFileName)
@@ -90,28 +88,28 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func AddProfileHandler, method os.Create by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			defer output.Close()
 			buffer, err := bimg.Read(filePath)
 			if err != nil {
 				h.logger.Debug("error func AddProfileHandler, method Read by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			newImage, err := bimg.NewImage(buffer).Convert(bimg.WEBP)
 			if err != nil {
 				h.logger.Debug("error func AddProfileHandler, method NewImage by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			bimg.Write(newFilePath, newImage)
 			if err := os.Remove(filePath); err != nil {
 				h.logger.Debug("error func AddProfileHandler, method os.Remove by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
-			image := profile.ImageProfile{
+			image := entity.ImageProfile{
 				Name:      file.Filename,
 				Url:       newFilePath,
 				Size:      file.Size,
@@ -132,7 +130,7 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func AddProfileHandler, method ParseUint height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			height = int(heightUint64)
 		}
@@ -142,11 +140,11 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func AddProfileHandler, method ParseUint height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			weight = int(weightUint64)
 		}
-		profileDto := &profile.Profile{
+		profileDto := &entity.Profile{
 			SessionID:      req.SessionID,
 			DisplayName:    req.DisplayName,
 			Birthday:       req.Birthday,
@@ -167,7 +165,7 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 		}
 		newProfile, err := h.uc.Add(ctx, profileDto)
 		for _, i := range profileDto.Images {
-			image := &profile.ImageProfile{
+			image := &entity.ImageProfile{
 				ProfileID: newProfile.ID,
 				Name:      i.Name,
 				Url:       i.Url,
@@ -183,28 +181,28 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func AddProfileHandler, method AddImage by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 		}
 		telegramID, err := strconv.ParseUint(req.TelegramID, 10, 64)
 		if err != nil {
 			h.logger.Debug("error func AddProfileHandler, method ParseUint by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		allowsWriteToPm, err := strconv.ParseBool(req.AllowsWriteToPm)
 		if err != nil {
 			h.logger.Debug("error func AddProfileHandler, method ParseBool by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		chatID, err := strconv.ParseUint(req.ChatID, 10, 64)
 		if err != nil {
 			h.logger.Debug("error func AddProfileHandler, method ParseUint by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		telegramDto := &profile.TelegramProfile{
+		telegramDto := &entity.TelegramProfile{
 			ProfileID:       newProfile.ID,
 			TelegramID:      telegramID,
 			UserName:        req.TelegramUserName,
@@ -219,7 +217,7 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func AddProfileHandler, method AddTelegram by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		ageFrom := 0
 		if req.AgeFrom != "" {
@@ -227,7 +225,7 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func AddProfileHandler, method ParseUint height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			ageFrom = int(ageFromUint8)
 		}
@@ -237,7 +235,7 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func AddProfileHandler, method ParseUint height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			ageTo = int(ageToUint8)
 		}
@@ -247,7 +245,7 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func AddProfileHandler, method ParseUint height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			distance = int(distance32)
 		}
@@ -257,7 +255,7 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func AddProfileHandler, method ParseUint height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			page = int(page32)
 		}
@@ -267,11 +265,11 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func AddProfileHandler, method ParseUint height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			size = int(size32)
 		}
-		filterDto := &profile.FilterProfile{
+		filterDto := &entity.FilterProfile{
 			ProfileID:    newProfile.ID,
 			SearchGender: req.SearchGender,
 			LookingFor:   req.LookingFor,
@@ -285,25 +283,25 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func AddProfileHandler, method AddFilter by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		latitude, err := strconv.ParseFloat(req.Latitude, 64)
 		if err != nil {
 			h.logger.Debug("error func AddProfileHandler, method ParseFloat height by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		longitude, err := strconv.ParseFloat(req.Longitude, 64)
 		if err != nil {
 			h.logger.Debug("error func AddProfileHandler, method ParseFloat height by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		point := &profile.Point{
+		point := &entity.Point{
 			Latitude:  latitude,
 			Longitude: longitude,
 		}
-		navigatorDto := &profile.NavigatorProfile{
+		navigatorDto := &entity.NavigatorProfile{
 			ProfileID: newProfile.ID,
 			Location:  point,
 		}
@@ -311,33 +309,33 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func AddProfileHandler, method AddNavigator by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		p, err := h.uc.FindById(ctx, newProfile.ID)
 		if err != nil {
 			h.logger.Debug("error func AddProfileHandler, method FindById by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		t, err := h.uc.FindTelegramByProfileID(ctx, p.ID)
 		if err != nil {
 			h.logger.Debug("error func AddProfileHandler, method FindTelegramByProfileID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		f, err := h.uc.FindFilterByProfileID(ctx, p.ID)
 		if err != nil {
 			h.logger.Debug("error func AddProfileHandler, method FindFilterByProfileID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		i, err := h.uc.SelectListPublicImage(ctx, p.ID)
 		if err != nil {
 			h.logger.Debug("error func AddProfileHandler, method SelectListPublicImage by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		response := &profile.Profile{
+		response := &entity.Profile{
 			ID:             p.ID,
 			SessionID:      p.SessionID,
 			DisplayName:    p.DisplayName,
@@ -359,32 +357,32 @@ func (h *HandlerProfile) AddProfileHandler() fiber.Handler {
 			Telegram:       t,
 			Filter:         f,
 		}
-		return r.WrapCreated(ctf, response)
+		return api.WrapCreated(ctf, response)
 	}
 }
 
-func (h *HandlerProfile) GetProfileListHandler() fiber.Handler {
+func (h *ProfileHandler) GetProfileListHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("GET /api/v1/profile/list")
 		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
 		defer cancel()
-		params := profile.QueryParamsProfileList{}
+		params := entity.QueryParamsProfileList{}
 		if err := ctf.QueryParser(&params); err != nil {
 			h.logger.Debug("error func GetProfileListHandler, method QueryParser by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		p, err := h.uc.FindBySessionID(ctx, params.SessionID)
 		if err != nil {
 			h.logger.Debug("error func GetProfileListHandler, method FindBySessionID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		err = h.uc.UpdateLastOnline(ctx, p.ID)
 		if err != nil {
 			h.logger.Debug("error func GetProfileListHandler, method UpdateLastOnline by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		latitudeStr := params.Latitude
 		longitudeStr := params.Longitude
@@ -393,19 +391,19 @@ func (h *HandlerProfile) GetProfileListHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func GetProfileBySessionIDHandler, method ParseFloat height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			longitude, err := strconv.ParseFloat(longitudeStr, 64)
 			if err != nil {
 				h.logger.Debug("error func GetProfileBySessionIDHandler, method ParseFloat height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
-			point := &profile.Point{
+			point := &entity.Point{
 				Latitude:  latitude,
 				Longitude: longitude,
 			}
-			navigatorDto := &profile.NavigatorProfile{
+			navigatorDto := &entity.NavigatorProfile{
 				ProfileID: p.ID,
 				Location:  point,
 			}
@@ -413,14 +411,14 @@ func (h *HandlerProfile) GetProfileListHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func GetProfileBySessionIDHandler, method UpdateNavigator by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 		}
 		f, err := h.uc.FindFilterByProfileID(ctx, p.ID)
 		if err != nil {
 			h.logger.Debug("error func GetProfileListHandler, method FindFilterByProfileID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		ageFrom := 0
 		if params.AgeFrom != "" {
@@ -428,7 +426,7 @@ func (h *HandlerProfile) GetProfileListHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func GetProfileListHandler, method ParseUint height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			ageFrom = int(ageFromUint8)
 		}
@@ -438,7 +436,7 @@ func (h *HandlerProfile) GetProfileListHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func GetProfileListHandler, method ParseUint height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			ageTo = int(ageToUint8)
 		}
@@ -448,11 +446,11 @@ func (h *HandlerProfile) GetProfileListHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func GetProfileListHandler, method ParseUint height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			distance = int(distance32)
 		}
-		filterDto := &profile.FilterProfile{
+		filterDto := &entity.FilterProfile{
 			ID:           f.ID,
 			ProfileID:    p.ID,
 			SearchGender: params.SearchGender,
@@ -467,41 +465,41 @@ func (h *HandlerProfile) GetProfileListHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func UpdateProfileHandler, method UpdateFilter by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		response, err := h.uc.SelectList(ctx, &params)
 		if err != nil {
 			h.logger.Debug("error func GetProfileListHandler, method SelectList by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		return r.WrapOk(ctf, response)
+		return api.WrapOk(ctf, response)
 	}
 }
 
-func (h *HandlerProfile) GetProfileBySessionIDHandler() fiber.Handler {
+func (h *ProfileHandler) GetProfileBySessionIDHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("GET /api/v1/profile/session/:id")
 		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
 		defer cancel()
 		sessionID := ctf.Params("id")
-		params := profile.QueryParamsGetProfileByUserID{}
+		params := entity.QueryParamsGetProfileByUserID{}
 		if err := ctf.QueryParser(&params); err != nil {
 			h.logger.Debug("error func GetProfileBySessionIDHandler, method QueryParser by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		p, err := h.uc.FindBySessionID(ctx, sessionID)
 		if err != nil {
 			h.logger.Debug("error func GetProfileBySessionIDHandler, method FindBySessionID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		err = h.uc.UpdateLastOnline(ctx, p.ID)
 		if err != nil {
 			h.logger.Debug("error func GetProfileBySessionIDHandler, method UpdateLastOnline by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		latitudeStr := params.Latitude
 		longitudeStr := params.Longitude
@@ -510,19 +508,19 @@ func (h *HandlerProfile) GetProfileBySessionIDHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func GetProfileBySessionIDHandler, method ParseFloat height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			longitude, err := strconv.ParseFloat(longitudeStr, 64)
 			if err != nil {
 				h.logger.Debug("error func GetProfileBySessionIDHandler, method ParseFloat height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
-			point := &profile.Point{
+			point := &entity.Point{
 				Latitude:  latitude,
 				Longitude: longitude,
 			}
-			navigatorDto := &profile.NavigatorProfile{
+			navigatorDto := &entity.NavigatorProfile{
 				ProfileID: p.ID,
 				Location:  point,
 			}
@@ -530,35 +528,35 @@ func (h *HandlerProfile) GetProfileBySessionIDHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func GetProfileBySessionIDHandler, method UpdateNavigator by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 		}
 		t, err := h.uc.FindTelegramByProfileID(ctx, p.ID)
 		if err != nil {
 			h.logger.Debug("error func GetProfileBySessionIDHandler, method FindTelegramByProfileID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		f, err := h.uc.FindFilterByProfileID(ctx, p.ID)
 		if err != nil {
 			h.logger.Debug("error func GetProfileBySessionIDHandler, method FindFilterByProfileID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		i, err := h.uc.SelectListPublicImage(ctx, p.ID)
 		if err != nil {
 			h.logger.Debug("error func GetProfileBySessionIDHandler, method SelectListPublicImage by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		response := &profile.ResponseProfile{
+		response := &entity.ResponseProfile{
 			ID:        p.ID,
 			SessionID: p.SessionID,
 			IsDeleted: p.IsDeleted,
 			IsBlocked: p.IsBlocked,
 			Image:     nil,
-			Telegram:  &profile.ResponseTelegramProfile{TelegramID: t.TelegramID},
-			Filter: &profile.ResponseFilterProfile{
+			Telegram:  &entity.ResponseTelegramProfile{TelegramID: t.TelegramID},
+			Filter: &entity.ResponseFilterProfile{
 				ID:           f.ID,
 				SearchGender: f.SearchGender,
 				LookingFor:   f.LookingFor,
@@ -570,16 +568,16 @@ func (h *HandlerProfile) GetProfileBySessionIDHandler() fiber.Handler {
 			},
 		}
 		if len(i) > 0 {
-			i := profile.ResponseImageProfile{
+			i := entity.ResponseImageProfile{
 				Url: i[0].Url,
 			}
 			response.Image = &i
 		}
-		return r.WrapOk(ctf, response)
+		return api.WrapOk(ctf, response)
 	}
 }
 
-func (h *HandlerProfile) GetProfileDetailHandler() fiber.Handler {
+func (h *ProfileHandler) GetProfileDetailHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("GET /api/v1/profile/detail/:id")
 		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
@@ -589,31 +587,31 @@ func (h *HandlerProfile) GetProfileDetailHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func GetProfileDetailHandler, method ParseUint by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		params := profile.QueryParamsGetProfileDetail{}
+		params := entity.QueryParamsGetProfileDetail{}
 		if err := ctf.QueryParser(&params); err != nil {
 			h.logger.Debug("error func GetProfileDetailHandler, method QueryParser by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		p, err := h.uc.FindById(ctx, profileID)
 		if err != nil {
 			h.logger.Debug("error func GetProfileDetailHandler, method FindById by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		v, err := h.uc.FindBySessionID(ctx, params.ViewerID)
 		if err != nil {
 			h.logger.Debug("error func GetProfileDetailHandler, method FindBySessionID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		err = h.uc.UpdateLastOnline(ctx, v.ID)
 		if err != nil {
 			h.logger.Debug("error func GetProfileDetailHandler, method UpdateLastOnline by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		latitudeStr := params.Latitude
 		longitudeStr := params.Longitude
@@ -622,19 +620,19 @@ func (h *HandlerProfile) GetProfileDetailHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func GetProfileDetailHandler, method ParseFloat height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			longitude, err := strconv.ParseFloat(longitudeStr, 64)
 			if err != nil {
 				h.logger.Debug("error func GetProfileDetailHandler, method ParseFloat height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
-			point := &profile.Point{
+			point := &entity.Point{
 				Latitude:  latitude,
 				Longitude: longitude,
 			}
-			navigatorDto := &profile.NavigatorProfile{
+			navigatorDto := &entity.NavigatorProfile{
 				ProfileID: v.ID,
 				Location:  point,
 			}
@@ -642,42 +640,42 @@ func (h *HandlerProfile) GetProfileDetailHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func GetProfileDetailHandler, method UpdateNavigator by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 		}
 		t, err := h.uc.FindTelegramByProfileID(ctx, profileID)
 		if err != nil {
 			h.logger.Debug("error func GetProfileDetailHandler, method FindTelegramByProfileID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		f, err := h.uc.FindFilterByProfileID(ctx, profileID)
 		if err != nil {
 			h.logger.Debug("error func GetProfileDetailHandler, method FindFilterByProfileID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		n, err := h.uc.FindNavigatorByProfileIDAndViewerID(ctx, p.ID, v.ID)
 		if err != nil {
 			h.logger.Debug("error func GetProfileDetailHandler, method FindNavigatorByProfileIDAndViewerID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		i, err := h.uc.SelectListPublicImage(ctx, profileID)
 		if err != nil {
 			h.logger.Debug("error func GetProfileDetailHandler, method SelectListPublicImage by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		l, isExistLike, err := h.uc.FindLikeByLikedUserID(ctx, v.ID, profileID)
 		if err != nil {
 			h.logger.Debug("error func GetProfileDetailHandler, FindLikeByHumanID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		var lDao *profile.ResponseLikeProfile
+		var lDao *entity.ResponseLikeProfile
 		if isExistLike {
-			lDao = &profile.ResponseLikeProfile{
+			lDao = &entity.ResponseLikeProfile{
 				ID: func() *uint64 {
 					if isExistLike {
 						return &l.ID
@@ -693,7 +691,7 @@ func (h *HandlerProfile) GetProfileDetailHandler() fiber.Handler {
 				}(),
 			}
 		}
-		response := &profile.ResponseProfileDetail{
+		response := &entity.ResponseProfileDetail{
 			ID:             p.ID,
 			SessionID:      p.SessionID,
 			DisplayName:    p.DisplayName,
@@ -722,49 +720,49 @@ func (h *HandlerProfile) GetProfileDetailHandler() fiber.Handler {
 		if elapsed.Minutes() < 5 {
 			response.IsOnline = true
 		}
-		return r.WrapOk(ctf, response)
+		return api.WrapOk(ctf, response)
 	}
 }
 
-func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
+func (h *ProfileHandler) UpdateProfileHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("POST /api/v1/profile/edit")
 		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
 		defer cancel()
-		req := profile.RequestUpdateProfile{}
+		req := entity.RequestUpdateProfile{}
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func UpdateProfileHandler, method BodyParser by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		profileID, err := strconv.ParseUint(req.ID, 10, 64)
 		if err != nil {
 			h.logger.Debug(
 				"error func UpdateProfileHandler, method ParseUint roomIdStr by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		profileInDB, err := h.uc.FindById(ctx, profileID)
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func UpdateProfileHandler, method FindById by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusNotFound)
+			return api.WrapError(ctf, err, http.StatusNotFound)
 		}
 		if profileInDB.IsDeleted == true {
 			msg := errors.Wrap(err, "user has already been deleted")
-			err = errorDomain.NewCustomError(msg, http.StatusNotFound)
-			return r.WrapError(ctf, err, http.StatusNotFound)
+			err = api.NewCustomError(msg, http.StatusNotFound)
+			return api.WrapError(ctf, err, http.StatusNotFound)
 		}
 		if profileInDB.IsBlocked == true {
 			msg := errors.Wrap(err, "user has already been blocked")
-			err = errorDomain.NewCustomError(msg, http.StatusNotFound)
-			return r.WrapError(ctf, err, http.StatusNotFound)
+			err = api.NewCustomError(msg, http.StatusNotFound)
+			return api.WrapError(ctf, err, http.StatusNotFound)
 		}
 		err = h.uc.UpdateLastOnline(ctx, profileInDB.ID)
 		if err != nil {
 			h.logger.Debug("error func UpdateProfileHandler, method UpdateLastOnline by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		filePath := fmt.Sprintf("static/uploads/profile/%s/images/defaultImage.jpg", req.UserName)
 		directoryPath := fmt.Sprintf("static/uploads/profile/%s/images", req.UserName)
@@ -772,14 +770,14 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 			if err := os.MkdirAll(directoryPath, 0755); err != nil {
 				h.logger.Debug("error func UpdateProfileHandler, method MkdirAll by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 		}
 		form, err := ctf.MultipartForm()
 		if err != nil {
 			h.logger.Debug("error func UpdateProfileHandler, method MultipartForm by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		height := 0
 		if req.Height != "" {
@@ -787,7 +785,7 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func UpdateProfileHandler, method ParseUint height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			height = int(heightUint64)
 		}
@@ -797,27 +795,27 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func UpdateProfileHandler, method ParseUint height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			weight = int(weightUint64)
 		}
 		imageFiles := form.File["image"]
-		profileDto := &profile.Profile{}
+		profileDto := &entity.Profile{}
 		if len(imageFiles) > 0 {
 			imagesFilePath := make([]string, 0, len(imageFiles))
-			imagesProfile := make([]*profile.ImageProfile, 0, len(imagesFilePath))
+			imagesProfile := make([]*entity.ImageProfile, 0, len(imagesFilePath))
 			for _, file := range imageFiles {
 				filePath = fmt.Sprintf("%s/%s", directoryPath, file.Filename)
 				if err := ctf.SaveFile(file, filePath); err != nil {
 					h.logger.Debug("error func UpdateProfileHandler, method SaveFile by path"+
 						" internal/handler/profile/profile.go", zap.Error(err))
-					return r.WrapError(ctf, err, http.StatusBadRequest)
+					return api.WrapError(ctf, err, http.StatusBadRequest)
 				}
 				fileImage, err := os.Open(filePath)
 				if err != nil {
 					h.logger.Debug("error func UpdateProfileHandler, method os.Open by path"+
 						" internal/handler/profile/profile.go", zap.Error(err))
-					return r.WrapError(ctf, err, http.StatusBadRequest)
+					return api.WrapError(ctf, err, http.StatusBadRequest)
 				}
 				// The Decode function is used to read images from a file or other source and convert them into an image.
 				// Image structure
@@ -825,7 +823,7 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 				if err != nil {
 					h.logger.Debug("error func UpdateProfileHandler, method jpeg.Decode by path"+
 						" internal/handler/profile/profile.go", zap.Error(err))
-					return r.WrapError(ctf, err, http.StatusBadRequest)
+					return api.WrapError(ctf, err, http.StatusBadRequest)
 				}
 				newFileName := replaceExtension(file.Filename)
 				newFilePath := fmt.Sprintf("%s/%s", directoryPath, newFileName)
@@ -833,28 +831,28 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 				if err != nil {
 					h.logger.Debug("error func UpdateProfileHandler, method os.Create by path"+
 						" internal/handler/profile/profile.go", zap.Error(err))
-					return r.WrapError(ctf, err, http.StatusBadRequest)
+					return api.WrapError(ctf, err, http.StatusBadRequest)
 				}
 				defer output.Close()
 				buffer, err := bimg.Read(filePath)
 				if err != nil {
 					h.logger.Debug("error func UpdateProfileHandler, method Read by path"+
 						" internal/handler/profile/profile.go", zap.Error(err))
-					return r.WrapError(ctf, err, http.StatusBadRequest)
+					return api.WrapError(ctf, err, http.StatusBadRequest)
 				}
 				newImage, err := bimg.NewImage(buffer).Convert(bimg.WEBP)
 				if err != nil {
 					h.logger.Debug("error func UpdateProfileHandler, method NewImage by path"+
 						" internal/handler/profile/profile.go", zap.Error(err))
-					return r.WrapError(ctf, err, http.StatusBadRequest)
+					return api.WrapError(ctf, err, http.StatusBadRequest)
 				}
 				bimg.Write(newFilePath, newImage)
 				if err := os.Remove(filePath); err != nil {
 					h.logger.Debug("error func UpdateProfileHandler, method os.Remove by path"+
 						" internal/handler/profile/profile.go", zap.Error(err))
-					return r.WrapError(ctf, err, http.StatusBadRequest)
+					return api.WrapError(ctf, err, http.StatusBadRequest)
 				}
-				image := profile.ImageProfile{
+				image := entity.ImageProfile{
 					Name:      file.Filename,
 					Url:       newFilePath,
 					Size:      file.Size,
@@ -868,7 +866,7 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 				imagesFilePath = append(imagesFilePath, newFilePath)
 				imagesProfile = append(imagesProfile, &image)
 			}
-			profileDto = &profile.Profile{
+			profileDto = &entity.Profile{
 				ID:             profileID,
 				SessionID:      profileInDB.SessionID,
 				DisplayName:    req.DisplayName,
@@ -889,7 +887,7 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 				Images:         imagesProfile,
 			}
 		} else {
-			profileDto = &profile.Profile{
+			profileDto = &entity.Profile{
 				ID:             profileID,
 				SessionID:      profileInDB.SessionID,
 				DisplayName:    req.DisplayName,
@@ -916,10 +914,10 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 				if err != nil {
 					h.logger.Debug("error func UpdateProfileHandler, method CheckIfCommonImageExists by path"+
 						" internal/handler/profile/profile.go", zap.Error(err))
-					return r.WrapError(ctf, err, http.StatusBadRequest)
+					return api.WrapError(ctf, err, http.StatusBadRequest)
 				}
 				if !exists {
-					image := &profile.ImageProfile{
+					image := &entity.ImageProfile{
 						ProfileID: profileUpdated.ID,
 						Name:      i.Name,
 						Url:       i.Url,
@@ -935,10 +933,10 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 					if err != nil {
 						h.logger.Debug("error func UpdateProfileHandler, method AddImage by path"+
 							" internal/handler/profile/profile.go", zap.Error(err))
-						return r.WrapError(ctf, err, http.StatusBadRequest)
+						return api.WrapError(ctf, err, http.StatusBadRequest)
 					}
 				} else {
-					image := &profile.ImageProfile{
+					image := &entity.ImageProfile{
 						ID:        imageID,
 						ProfileID: profileUpdated.ID,
 						Name:      i.Name,
@@ -955,7 +953,7 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 					if err != nil {
 						h.logger.Debug("error func UpdateProfileHandler, method UpdateImage by path"+
 							" internal/handler/profile/profile.go", zap.Error(err))
-						return r.WrapError(ctf, err, http.StatusBadRequest)
+						return api.WrapError(ctf, err, http.StatusBadRequest)
 					}
 				}
 			}
@@ -964,27 +962,27 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func UpdateProfileHandler, method ParseUint roomIdStr by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		chatID, err := strconv.ParseUint(req.ChatID, 10, 64)
 		if err != nil {
 			h.logger.Debug("error func UpdateProfileHandler, method ParseUint roomIdStr by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		allowsWriteToPm, err := strconv.ParseBool(req.AllowsWriteToPm)
 		if err != nil {
 			h.logger.Debug("error func UpdateProfileHandler, method ParseBool roomIdStr by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		t, err := h.uc.FindTelegramByProfileID(ctx, profileUpdated.ID)
 		if err != nil {
 			h.logger.Debug("error func UpdateProfileHandler, method FindTelegramByProfileID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		telegramDto := &profile.TelegramProfile{
+		telegramDto := &entity.TelegramProfile{
 			ID:              t.ID,
 			ProfileID:       profileUpdated.ID,
 			TelegramID:      telegramID,
@@ -1000,15 +998,15 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func UpdateProfileHandler, method FindFilterByProfileID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		_, err = h.uc.UpdateTelegram(ctx, telegramDto)
 		if err != nil {
 			h.logger.Debug("error func UpdateProfileHandler, method UpdateTelegram by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		filterDto := &profile.FilterProfile{
+		filterDto := &entity.FilterProfile{
 			ID:           f.ID,
 			ProfileID:    profileUpdated.ID,
 			SearchGender: req.SearchGender,
@@ -1018,7 +1016,7 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func UpdateProfileHandler, method UpdateFilter by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		latitudeStr := req.Latitude
 		longitudeStr := req.Longitude
@@ -1027,19 +1025,19 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func UpdateProfileHandler, method ParseFloat height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 			longitude, err := strconv.ParseFloat(longitudeStr, 64)
 			if err != nil {
 				h.logger.Debug("error func UpdateProfileHandler, method ParseFloat height by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
-			point := &profile.Point{
+			point := &entity.Point{
 				Latitude:  latitude,
 				Longitude: longitude,
 			}
-			navigatorDto := &profile.NavigatorProfile{
+			navigatorDto := &entity.NavigatorProfile{
 				ProfileID: profileID,
 				Location:  point,
 			}
@@ -1047,33 +1045,33 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func UpdateProfileHandler, method UpdateNavigator by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 		}
 		if err != nil {
 			h.logger.Debug("error func UpdateProfileHandler, method UpdateNavigator by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		p, err := h.uc.FindById(ctx, profileUpdated.ID)
 		if err != nil {
 			h.logger.Debug("error func UpdateProfileHandler, method FindById by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		t, err = h.uc.FindTelegramByProfileID(ctx, p.ID)
 		if err != nil {
 			h.logger.Debug("error func UpdateProfileHandler method FindTelegramByProfileID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		i, err := h.uc.SelectListPublicImage(ctx, p.ID)
 		if err != nil {
 			h.logger.Debug("error func UpdateProfileHandler, method SelectListPublicImage by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		response := &profile.Profile{
+		response := &entity.Profile{
 			ID:             p.ID,
 			SessionID:      p.SessionID,
 			DisplayName:    p.DisplayName,
@@ -1095,43 +1093,43 @@ func (h *HandlerProfile) UpdateProfileHandler() fiber.Handler {
 			Telegram:       t,
 			Filter:         f,
 		}
-		return r.WrapCreated(ctf, response)
+		return api.WrapCreated(ctf, response)
 	}
 }
 
-func (h *HandlerProfile) DeleteProfileHandler() fiber.Handler {
+func (h *ProfileHandler) DeleteProfileHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("POST /api/v1/profile/delete")
 		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
 		defer cancel()
-		req := profile.RequestDeleteProfile{}
+		req := entity.RequestDeleteProfile{}
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func DeleteProfileHandler, method BodyParser by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		profileID, err := strconv.ParseUint(req.ID, 10, 64)
 		if err != nil {
 			h.logger.Debug("error func DeleteProfileHandler, method ParseUint roomIdStr by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		profileInDB, err := h.uc.FindById(ctx, profileID)
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func DeleteProfileHandler, method FindById by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusNotFound)
+			return api.WrapError(ctf, err, http.StatusNotFound)
 		}
 		if profileInDB.IsDeleted == true {
 			msg := errors.Wrap(err, "user has already been deleted")
-			err = errorDomain.NewCustomError(msg, http.StatusNotFound)
-			return r.WrapError(ctf, err, http.StatusNotFound)
+			err = api.NewCustomError(msg, http.StatusNotFound)
+			return api.WrapError(ctf, err, http.StatusNotFound)
 		}
 		err = h.uc.UpdateLastOnline(ctx, profileInDB.ID)
 		if err != nil {
 			h.logger.Debug("error func DeleteProfileHandler, method UpdateLastOnline by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		imageList, err := h.uc.SelectListImage(ctx, profileID)
 		if len(imageList) > 0 {
@@ -1140,9 +1138,9 @@ func (h *HandlerProfile) DeleteProfileHandler() fiber.Handler {
 				if err := os.Remove(filePath); err != nil {
 					h.logger.Debug("error func DeleteProfileHandler, method Remove by path"+
 						" internal/handler/profile/profile.go", zap.Error(err))
-					return r.WrapError(ctf, err, http.StatusBadRequest)
+					return api.WrapError(ctf, err, http.StatusBadRequest)
 				}
-				imageDTO := &profile.ImageProfile{
+				imageDTO := &entity.ImageProfile{
 					ID:        i.ID,
 					ProfileID: i.ProfileID,
 					Name:      "",
@@ -1159,7 +1157,7 @@ func (h *HandlerProfile) DeleteProfileHandler() fiber.Handler {
 				if err != nil {
 					h.logger.Debug("error func DeleteProfileHandler, method DeleteImage by path"+
 						" internal/handler/profile/profile.go", zap.Error(err))
-					return r.WrapError(ctf, err, http.StatusBadRequest)
+					return api.WrapError(ctf, err, http.StatusBadRequest)
 				}
 			}
 		}
@@ -1167,9 +1165,9 @@ func (h *HandlerProfile) DeleteProfileHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func DeleteProfileHandler, method FindTelegramByProfileID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		telegramDto := &profile.TelegramProfile{
+		telegramDto := &entity.TelegramProfile{
 			ID:              t.ID,
 			ProfileID:       profileInDB.ID,
 			TelegramID:      0,
@@ -1185,19 +1183,19 @@ func (h *HandlerProfile) DeleteProfileHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func DeleteProfileHandler, method DeleteTelegram by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		n, err := h.uc.FindNavigatorByProfileID(ctx, profileInDB.ID)
 		if err != nil {
 			h.logger.Debug("error func DeleteProfileHandler, method FindNavigatorByProfileID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		point := &profile.Point{
+		point := &entity.Point{
 			Latitude:  0.0,
 			Longitude: 0.0,
 		}
-		navigatorDto := &profile.NavigatorProfile{
+		navigatorDto := &entity.NavigatorProfile{
 			ID:        n.ID,
 			ProfileID: profileInDB.ID,
 			Location:  point,
@@ -1206,15 +1204,15 @@ func (h *HandlerProfile) DeleteProfileHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func DeleteProfileHandler, method DeleteNavigator by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		f, err := h.uc.FindFilterByProfileID(ctx, profileInDB.ID)
 		if err != nil {
 			h.logger.Debug("error func DeleteProfileHandler, method FindFilterByProfileID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		filterDto := &profile.FilterProfile{
+		filterDto := &entity.FilterProfile{
 			ID:           f.ID,
 			ProfileID:    profileInDB.ID,
 			SearchGender: "",
@@ -1229,9 +1227,9 @@ func (h *HandlerProfile) DeleteProfileHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func DeleteProfileHandler, method DeleteFilter by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		profileDto := &profile.Profile{
+		profileDto := &entity.Profile{
 			ID:             profileID,
 			SessionID:      "",
 			DisplayName:    "",
@@ -1254,15 +1252,15 @@ func (h *HandlerProfile) DeleteProfileHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func DeleteProfileHandler, method Delete by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		p, err := h.uc.FindById(ctx, profileID)
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func DeleteProfileHandler, method FindById by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusNotFound)
+			return api.WrapError(ctf, err, http.StatusNotFound)
 		}
-		response := &profile.Profile{
+		response := &entity.Profile{
 			ID:             p.ID,
 			SessionID:      p.SessionID,
 			DisplayName:    p.DisplayName,
@@ -1285,45 +1283,45 @@ func (h *HandlerProfile) DeleteProfileHandler() fiber.Handler {
 			Navigator:      nil,
 			Filter:         nil,
 		}
-		return r.WrapCreated(ctf, response)
+		return api.WrapCreated(ctf, response)
 	}
 }
 
-func (h *HandlerProfile) DeleteProfileImageHandler() fiber.Handler {
+func (h *ProfileHandler) DeleteProfileImageHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("POST /api/v1/profile/image/delete")
 		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
 		defer cancel()
-		req := profile.RequestDeleteProfileImage{}
+		req := entity.RequestDeleteProfileImage{}
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func DeleteProfileImageHandler, method BodyParser by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		imageID, err := strconv.ParseUint(req.ID, 10, 64)
 		if err != nil {
 			h.logger.Debug("error func DeleteProfileImageHandler, method ParseUint roomIdStr by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		imageInDB, err := h.uc.FindImageById(ctx, imageID)
 		if err != nil {
 			h.logger.Debug("error func DeleteProfileImageHandler, method FindImageById by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		if imageInDB.IsDeleted == true {
 			msg := errors.Wrap(err, "image has already been deleted")
-			err = errorDomain.NewCustomError(msg, http.StatusNotFound)
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			err = api.NewCustomError(msg, http.StatusNotFound)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		filePath := imageInDB.Url
 		if err := os.Remove(filePath); err != nil {
 			h.logger.Debug("error func DeleteProfileImageHandler, method Remove by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		imageDTO := &profile.ImageProfile{
+		imageDTO := &entity.ImageProfile{
 			ID:        imageInDB.ID,
 			ProfileID: imageInDB.ProfileID,
 			Name:      "",
@@ -1340,17 +1338,17 @@ func (h *HandlerProfile) DeleteProfileImageHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func DeleteProfileImageHandler, method DeleteImage by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		return r.WrapCreated(ctf, response)
+		return api.WrapCreated(ctf, response)
 	}
 }
 
-func (h *HandlerProfile) hsin(theta float64) float64 {
+func (h *ProfileHandler) hsin(theta float64) float64 {
 	return math.Pow(math.Sin(theta/2), 2)
 }
 
-func (h *HandlerProfile) Distance(lat1, lon1, lat2, lon2 float64) float64 {
+func (h *ProfileHandler) Distance(lat1, lon1, lat2, lon2 float64) float64 {
 	var la1, lo1, la2, lo2, rad float64
 	la1 = lat1 * math.Pi / 180
 	lo1 = lon1 * math.Pi / 180
@@ -1361,36 +1359,36 @@ func (h *HandlerProfile) Distance(lat1, lon1, lat2, lon2 float64) float64 {
 	return 2 * rad * math.Asin(math.Sqrt(hs))
 }
 
-func (h *HandlerProfile) AddReviewHandler() fiber.Handler {
+func (h *ProfileHandler) AddReviewHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("POST /api/v1/review/add")
 		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
 		defer cancel()
-		req := profile.RequestAddReview{}
+		req := entity.RequestAddReview{}
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func AddReviewHandler, method BodyParser by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		profileID, err := strconv.ParseUint(req.ProfileID, 10, 64)
 		if err != nil {
 			h.logger.Debug("error func AddReviewHandler, method ParseUint roomIdStr by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		err = h.uc.UpdateLastOnline(ctx, profileID)
 		if err != nil {
 			h.logger.Debug("error func AddReviewHandler, method UpdateLastOnline by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		rating, err := strconv.ParseFloat(req.Rating, 32)
 		if err != nil {
 			h.logger.Debug("error func AddReviewHandler, method ParseUint roomIdStr by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		reviewDto := &profile.ReviewProfile{
+		reviewDto := &entity.ReviewProfile{
 			ProfileID:  profileID,
 			Message:    req.Message,
 			Rating:     float32(rating),
@@ -1403,59 +1401,59 @@ func (h *HandlerProfile) AddReviewHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func AddReviewHandler, method AddReview by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		return r.WrapCreated(ctf, review)
+		return api.WrapCreated(ctf, review)
 	}
 }
 
-func (h *HandlerProfile) UpdateReviewHandler() fiber.Handler {
+func (h *ProfileHandler) UpdateReviewHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("POST /api/v1/review/update")
 		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
 		defer cancel()
-		req := profile.RequestUpdateReview{}
+		req := entity.RequestUpdateReview{}
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func UpdateReviewHandler, method BodyParser by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		reviewID, err := strconv.ParseUint(req.ID, 10, 64)
 		if err != nil {
 			h.logger.Debug("error func UpdateReviewHandler, method ParseUint roomIdStr by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		profileID, err := strconv.ParseUint(req.ProfileID, 10, 64)
 		if err != nil {
 			h.logger.Debug("error func UpdateReviewHandler, method ParseUint roomIdStr by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		err = h.uc.UpdateLastOnline(ctx, profileID)
 		if err != nil {
 			h.logger.Debug("error func UpdateReviewHandler, method UpdateLastOnline by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		reviewInDB, err := h.uc.FindReviewById(ctx, reviewID)
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func UpdateReviewHandler, method FindReviewById by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusNotFound)
+			return api.WrapError(ctf, err, http.StatusNotFound)
 		}
 		if reviewInDB.HasDeleted == true {
 			msg := errors.Wrap(err, "review has already been deleted")
-			err = errorDomain.NewCustomError(msg, http.StatusNotFound)
-			return r.WrapError(ctf, err, http.StatusNotFound)
+			err = api.NewCustomError(msg, http.StatusNotFound)
+			return api.WrapError(ctf, err, http.StatusNotFound)
 		}
 		rating, err := strconv.ParseFloat(req.Rating, 32)
 		if err != nil {
 			h.logger.Debug("error func UpdateReviewHandler, method ParseUint roomIdStr by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		reviewDto := &profile.ReviewProfile{
+		reviewDto := &entity.ReviewProfile{
 			ID:         reviewID,
 			ProfileID:  profileID,
 			Message:    req.Message,
@@ -1469,41 +1467,41 @@ func (h *HandlerProfile) UpdateReviewHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func UpdateReviewHandler, method UpdateReview by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		return r.WrapCreated(ctf, review)
+		return api.WrapCreated(ctf, review)
 	}
 }
 
-func (h *HandlerProfile) DeleteReviewHandler() fiber.Handler {
+func (h *ProfileHandler) DeleteReviewHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("POST /api/v1/review/delete")
 		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
 		defer cancel()
-		req := profile.RequestDeleteReview{}
+		req := entity.RequestDeleteReview{}
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func DeleteReviewHandler, method BodyParser by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		reviewID, err := strconv.ParseUint(req.ID, 10, 64)
 		if err != nil {
 			h.logger.Debug("error func DeleteReviewHandler, method ParseUint roomIdStr by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		reviewInDB, err := h.uc.FindReviewById(ctx, reviewID)
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func DeleteReviewHandler, method FindReviewById by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusNotFound)
+			return api.WrapError(ctf, err, http.StatusNotFound)
 		}
 		if reviewInDB.HasDeleted == true {
 			msg := errors.Wrap(err, "review has already been deleted")
-			err = errorDomain.NewCustomError(msg, http.StatusNotFound)
-			return r.WrapError(ctf, err, http.StatusNotFound)
+			err = api.NewCustomError(msg, http.StatusNotFound)
+			return api.WrapError(ctf, err, http.StatusNotFound)
 		}
-		reviewDto := &profile.ReviewProfile{
+		reviewDto := &entity.ReviewProfile{
 			ID:         reviewID,
 			ProfileID:  reviewInDB.ProfileID,
 			Message:    reviewInDB.Message,
@@ -1517,13 +1515,13 @@ func (h *HandlerProfile) DeleteReviewHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func DeleteReviewHandler, method UpdateReview by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		return r.WrapCreated(ctf, review)
+		return api.WrapCreated(ctf, review)
 	}
 }
 
-func (h *HandlerProfile) GetReviewByIDHandler() fiber.Handler {
+func (h *ProfileHandler) GetReviewByIDHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("GET /api/v1/review/detail/:id")
 		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
@@ -1533,64 +1531,64 @@ func (h *HandlerProfile) GetReviewByIDHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func GetReviewByIDHandler, method ParseUint by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		response, err := h.uc.FindReviewById(ctx, id)
 		if err != nil {
 			h.logger.Debug("error func GetProfileByIDHandler, method FindReviewById by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		return r.WrapOk(ctf, response)
+		return api.WrapOk(ctf, response)
 	}
 }
 
-func (h *HandlerProfile) GetReviewListHandler() fiber.Handler {
+func (h *ProfileHandler) GetReviewListHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("GET /api/v1/review/list")
 		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
 		defer cancel()
-		params := profile.QueryParamsReviewList{}
+		params := entity.QueryParamsReviewList{}
 		if err := ctf.QueryParser(&params); err != nil {
 			h.logger.Debug("error func GetReviewListHandler, method QueryParser by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		profileID, err := strconv.ParseUint(params.ProfileID, 10, 64)
 		if err != nil {
 			h.logger.Debug("error func GetReviewListHandler, method ParseUint roomIdStr by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		err = h.uc.UpdateLastOnline(ctx, profileID)
 		if err != nil {
 			h.logger.Debug("error func GetReviewListHandler, method UpdateLastOnline by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		response, err := h.uc.SelectReviewList(ctx, &params)
 		if err != nil {
 			h.logger.Debug("error func GetReviewListHandler, method SelectList by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		return r.WrapOk(ctf, response)
+		return api.WrapOk(ctf, response)
 	}
 }
 
-func (h *HandlerProfile) AddLikeHandler() fiber.Handler {
+func (h *ProfileHandler) AddLikeHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("POST /api/v1/like/add")
 
 		go func() {
-			h.uc.Hub.Broadcast <- &hub.Content{
+			h.uc.Hub.Broadcast <- &entity.Content{
 				ChatID:   1,
 				Type:     "like",
 				Message:  "Ты понравился",
 				Username: "@kira",
 			}
 		}()
-		return r.WrapCreated(ctf, nil)
+		return api.WrapCreated(ctf, nil)
 
 		//ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
 		//defer cancel()
@@ -1598,37 +1596,37 @@ func (h *HandlerProfile) AddLikeHandler() fiber.Handler {
 		//if err := ctf.BodyParser(&req); err != nil {
 		//	h.logger.Debug("error func AddLikeHandler, method BodyParser by path"+
 		//		" internal/handler/profile/profile.go", zap.Error(err))
-		//	return r.WrapError(ctf, err, http.StatusBadRequest)
+		//	return api.WrapError(ctf, err, http.StatusBadRequest)
 		//}
 		//likedUserID, err := strconv.ParseUint(req.LikedUserID, 10, 64)
 		//if err != nil {
 		//	h.logger.Debug("error func AddLikeHandler, method ParseUint by path "+
 		//		" internal/handler/profile/profile.go", zap.Error(err))
-		//	return r.WrapError(ctf, err, http.StatusBadRequest)
+		//	return api.WrapError(ctf, err, http.StatusBadRequest)
 		//}
 		//p, err := h.uc.FindBySessionID(ctx, req.SessionID)
 		//if err != nil {
 		//	h.logger.Debug("error func AddLikeHandler, method FindByKeycloakID by path "+
 		//		" internal/handler/profile/profile.go", zap.Error(err))
-		//	return r.WrapError(ctf, err, http.StatusBadRequest)
+		//	return api.WrapError(ctf, err, http.StatusBadRequest)
 		//}
 		//telegramBySessionID, err := h.uc.FindTelegramByProfileID(ctx, p.ID)
 		//if err != nil {
 		//	h.logger.Debug("error func AddLikeHandler, method FindTelegramByProfileID by path "+
 		//		" internal/handler/profile/profile.go", zap.Error(err))
-		//	return r.WrapError(ctf, err, http.StatusBadRequest)
+		//	return api.WrapError(ctf, err, http.StatusBadRequest)
 		//}
 		//telegramByLikedUserID, err := h.uc.FindTelegramByProfileID(ctx, likedUserID)
 		//if err != nil {
 		//	h.logger.Debug("error func AddLikeHandler, method FindTelegramByProfileID by path "+
 		//		" internal/handler/profile/profile.go", zap.Error(err))
-		//	return r.WrapError(ctf, err, http.StatusBadRequest)
+		//	return api.WrapError(ctf, err, http.StatusBadRequest)
 		//}
 		//err = h.uc.UpdateLastOnline(ctx, p.ID)
 		//if err != nil {
 		//	h.logger.Debug("error func AddLikeHandler, method UpdateLastOnline by path"+
 		//		" internal/handler/profile/profile.go", zap.Error(err))
-		//	return r.WrapError(ctf, err, http.StatusBadRequest)
+		//	return api.WrapError(ctf, err, http.StatusBadRequest)
 		//}
 		//likeDto := &profile.LikeProfile{
 		//	ProfileID:   p.ID,
@@ -1641,7 +1639,7 @@ func (h *HandlerProfile) AddLikeHandler() fiber.Handler {
 		//if err != nil {
 		//	h.logger.Debug("error func AddLikeHandler, method AddLike by path"+
 		//		" internal/handler/profile/profile.go", zap.Error(err))
-		//	return r.WrapError(ctf, err, http.StatusBadRequest)
+		//	return api.WrapError(ctf, err, http.StatusBadRequest)
 		//}
 		//go func() {
 		//	h.uc.Hub.Broadcast <- &hub.Content{
@@ -1651,37 +1649,37 @@ func (h *HandlerProfile) AddLikeHandler() fiber.Handler {
 		//		Username: telegramBySessionID.UserName,
 		//	}
 		//}()
-		//return r.WrapCreated(ctf, like)
+		//return api.WrapCreated(ctf, like)
 	}
 }
 
-func (h *HandlerProfile) DeleteLikeHandler() fiber.Handler {
+func (h *ProfileHandler) DeleteLikeHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("POST /api/v1/like/delete")
 		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
 		defer cancel()
-		req := profile.RequestDeleteLike{}
+		req := entity.RequestDeleteLike{}
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func DeleteLikeHandler, method BodyParser by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		likeID, err := strconv.ParseUint(req.ID, 10, 64)
 		if err != nil {
 			h.logger.Debug("error func DeleteLikeHandler, method ParseUint by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		l, isExistLike, err := h.uc.FindLikeByID(ctx, likeID)
 		if err != nil {
 			h.logger.Debug("error func DeleteLikeHandler, method FindByKeycloakID by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		if !isExistLike {
 			h.logger.Debug("error func DeleteLikeHandler, method !isExistLike by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			msg := errorDomain.ResponseError{
+			msg := api.ResponseError{
 				StatusCode: http.StatusNotFound,
 				Success:    false,
 				Message:    "not found",
@@ -1692,9 +1690,9 @@ func (h *HandlerProfile) DeleteLikeHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func DeleteLikeHandler, method UpdateLastOnline by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		likeDto := &profile.LikeProfile{
+		likeDto := &entity.LikeProfile{
 			ID:          likeID,
 			ProfileID:   l.ProfileID,
 			LikedUserID: l.LikedUserID,
@@ -1706,39 +1704,39 @@ func (h *HandlerProfile) DeleteLikeHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func DeleteLikeHandler, method DeleteLike by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		return r.WrapCreated(ctf, like)
+		return api.WrapCreated(ctf, like)
 	}
 }
 
-func (h *HandlerProfile) UpdateLikeHandler() fiber.Handler {
+func (h *ProfileHandler) UpdateLikeHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("POST /api/v1/like/update")
 		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
 		defer cancel()
-		req := profile.RequestUpdateLike{}
+		req := entity.RequestUpdateLike{}
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func UpdateLikeHandler, method BodyParser by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		likeID, err := strconv.ParseUint(req.ID, 10, 64)
 		if err != nil {
 			h.logger.Debug("error func UpdateLikeHandler, method ParseUint by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		l, isExist, err := h.uc.FindLikeByID(ctx, likeID)
 		if err != nil {
 			h.logger.Debug("error func UpdateLikeHandler, method FindLikeByID by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		if !isExist {
 			h.logger.Debug("error func UpdateLikeHandler, method !isExist by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			msg := errorDomain.ResponseError{
+			msg := api.ResponseError{
 				StatusCode: http.StatusNotFound,
 				Success:    false,
 				Message:    "not found",
@@ -1749,9 +1747,9 @@ func (h *HandlerProfile) UpdateLikeHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func UpdateLikeHandler, method UpdateLastOnline by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		likeDto := &profile.LikeProfile{
+		likeDto := &entity.LikeProfile{
 			ID:          likeID,
 			ProfileID:   l.ProfileID,
 			LikedUserID: l.LikedUserID,
@@ -1763,42 +1761,42 @@ func (h *HandlerProfile) UpdateLikeHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func UpdateLikeHandler, method UpdateLike by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		return r.WrapCreated(ctf, like)
+		return api.WrapCreated(ctf, like)
 	}
 }
 
-func (h *HandlerProfile) AddBlockHandler() fiber.Handler {
+func (h *ProfileHandler) AddBlockHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("POST /api/v1/block/add")
 		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
 		defer cancel()
-		req := profile.RequestAddBlock{}
+		req := entity.RequestAddBlock{}
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func AddBlockHandler, method BodyParser by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		blockedUserID, err := strconv.ParseUint(req.BlockedUserID, 10, 64)
 		if err != nil {
 			h.logger.Debug("error func AddBlockHandler, method ParseUint by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		p, err := h.uc.FindBySessionID(ctx, req.SessionID)
 		if err != nil {
 			h.logger.Debug("error func AddBlockHandler, method FindBySessionID by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		err = h.uc.UpdateLastOnline(ctx, p.ID)
 		if err != nil {
 			h.logger.Debug("error func AddBlockHandler, method UpdateLastOnline by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		blockDto := &profile.BlockedProfile{
+		blockDto := &entity.BlockedProfile{
 			ProfileID:     p.ID,
 			BlockedUserID: blockedUserID,
 			IsBlocked:     true,
@@ -1809,9 +1807,9 @@ func (h *HandlerProfile) AddBlockHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func AddBlockHandler, method AddBlock by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		blockForBlockedUserDto := &profile.BlockedProfile{
+		blockForBlockedUserDto := &entity.BlockedProfile{
 			ProfileID:     blockedUserID,
 			BlockedUserID: p.ID,
 			IsBlocked:     true,
@@ -1822,39 +1820,39 @@ func (h *HandlerProfile) AddBlockHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func AddBlockHandler, method AddBlock by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		return r.WrapCreated(ctf, block)
+		return api.WrapCreated(ctf, block)
 	}
 }
 
-func (h *HandlerProfile) UpdateBlockHandler() fiber.Handler {
+func (h *ProfileHandler) UpdateBlockHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("POST /api/v1/block/update")
 		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
 		defer cancel()
-		req := profile.RequestUpdateBlock{}
+		req := entity.RequestUpdateBlock{}
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func UpdateBlockHandler, method BodyParser by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		blockID, err := strconv.ParseUint(req.ID, 10, 64)
 		if err != nil {
 			h.logger.Debug("error func UpdateBlockHandler method ParseUint by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		b, isExist, err := h.uc.FindBlockByID(ctx, blockID)
 		if err != nil {
 			h.logger.Debug("error func UpdateBlockHandler, method FindBlockByID by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		if !isExist {
 			h.logger.Debug("error func UpdateBlockHandler, method !isExist by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			msg := errorDomain.ResponseError{
+			msg := api.ResponseError{
 				StatusCode: http.StatusNotFound,
 				Success:    false,
 				Message:    "not found",
@@ -1865,9 +1863,9 @@ func (h *HandlerProfile) UpdateBlockHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func UpdateBlockHandler, method UpdateLastOnline by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		blockDto := &profile.BlockedProfile{
+		blockDto := &entity.BlockedProfile{
 			ID:            blockID,
 			ProfileID:     b.ProfileID,
 			BlockedUserID: blockID,
@@ -1879,42 +1877,42 @@ func (h *HandlerProfile) UpdateBlockHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func UpdateBlockHandler, method UpdateBlock by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		return r.WrapCreated(ctf, like)
+		return api.WrapCreated(ctf, like)
 	}
 }
 
-func (h *HandlerProfile) AddComplaintHandler() fiber.Handler {
+func (h *ProfileHandler) AddComplaintHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		h.logger.Info("POST /api/v1/complaint/add")
 		ctx, cancel := context.WithTimeout(ctf.Context(), TimeoutDuration)
 		defer cancel()
-		req := profile.RequestAddComplaint{}
+		req := entity.RequestAddComplaint{}
 		if err := ctf.BodyParser(&req); err != nil {
 			h.logger.Debug("error func AddComplaintHandler, method BodyParser by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		complaintUserId, err := strconv.ParseUint(req.ComplaintUserID, 10, 64)
 		if err != nil {
 			h.logger.Debug("error func AddComplaintHandler, method ParseUint by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		p, err := h.uc.FindBySessionID(ctx, req.SessionID)
 		if err != nil {
 			h.logger.Debug("error func AddComplaintHandler, method FindBySessionID by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		err = h.uc.UpdateLastOnline(ctx, p.ID)
 		if err != nil {
 			h.logger.Debug("error func AddComplaintHandle, method UpdateLastOnline by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		complaintDto := &profile.ComplaintProfile{
+		complaintDto := &entity.ComplaintProfile{
 			ProfileID:       p.ID,
 			ComplaintUserID: complaintUserId,
 			Reason:          req.Reason,
@@ -1925,9 +1923,9 @@ func (h *HandlerProfile) AddComplaintHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func AddComplaintHandler, method AddComplaint by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		blockDto := &profile.BlockedProfile{
+		blockDto := &entity.BlockedProfile{
 			ProfileID:     p.ID,
 			BlockedUserID: complaintUserId,
 			IsBlocked:     true,
@@ -1938,22 +1936,22 @@ func (h *HandlerProfile) AddComplaintHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func AddComplaintHandler, method AddBlock by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		listComplaint, err := h.uc.SelectListComplaintByID(ctx, complaintUserId)
 		if err != nil {
 			h.logger.Debug("error func AddComplaintHandler, method SelectListComplaintByID by path"+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		if len(filterComplaintsByCurrentMonth(listComplaint)) > 1 {
 			p, err := h.uc.FindById(ctx, complaintUserId)
 			if err != nil {
 				h.logger.Debug("error func AddComplaintHandler, method FindById by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
-			profileDto := &profile.Profile{
+			profileDto := &entity.Profile{
 				ID:             p.ID,
 				SessionID:      p.SessionID,
 				DisplayName:    p.DisplayName,
@@ -1976,18 +1974,18 @@ func (h *HandlerProfile) AddComplaintHandler() fiber.Handler {
 			if err != nil {
 				h.logger.Debug("error func AddComplaintHandler, method Update by path"+
 					" internal/handler/profile/profile.go", zap.Error(err))
-				return r.WrapError(ctf, err, http.StatusBadRequest)
+				return api.WrapError(ctf, err, http.StatusBadRequest)
 			}
 		}
-		return r.WrapCreated(ctf, complaint)
+		return api.WrapCreated(ctf, complaint)
 	}
 }
 
 // filterComplaintsByCurrentMonth возвращает кол-во жалоб за текущий месяц
-func filterComplaintsByCurrentMonth(complaints []*profile.ComplaintProfile) []*profile.ComplaintProfile {
+func filterComplaintsByCurrentMonth(complaints []*entity.ComplaintProfile) []*entity.ComplaintProfile {
 	currentMonth := time.Now().UTC().Month()
 	currentYear := time.Now().UTC().Year()
-	filteredComplaints := make([]*profile.ComplaintProfile, 0)
+	filteredComplaints := make([]*entity.ComplaintProfile, 0)
 	for _, complaint := range complaints {
 		if complaint.CreatedAt.Month() == currentMonth && complaint.CreatedAt.Year() == currentYear {
 			filteredComplaints = append(filteredComplaints, complaint)

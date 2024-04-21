@@ -2,28 +2,25 @@ package app
 
 import (
 	"context"
-	profileRepo "github.com/EvgeniyBudaev/gravity/server-service/internal/adapter/psqlRepo/profile"
-	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity/hub"
-	identityEntity "github.com/EvgeniyBudaev/gravity/server-service/internal/entity/identity"
-	profileHandler "github.com/EvgeniyBudaev/gravity/server-service/internal/handler/profile"
-	userHandler "github.com/EvgeniyBudaev/gravity/server-service/internal/handler/user"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/middlewares"
-	profileUseCase "github.com/EvgeniyBudaev/gravity/server-service/internal/useCase/profile"
-	userUseCase "github.com/EvgeniyBudaev/gravity/server-service/internal/useCase/user"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/storage/psql"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/usecases"
 	"go.uber.org/zap"
 )
 
 var prefix = "/api/v1"
 
-func (app *App) StartHTTPServer(ctx context.Context, h *hub.Hub) error {
+func (app *App) StartHTTPServer(ctx context.Context, h *entity.Hub) error {
 	app.fiber.Static("/static", "./static")
 	done := make(chan struct{})
-	im := identityEntity.NewIdentity(app.config, app.Logger)
-	pr := profileRepo.NewRepositoryProfile(app.Logger, app.db.psql)
-	imc := userUseCase.NewUseCaseUser(app.Logger, im)
-	puc := profileUseCase.NewUseCaseProfile(app.Logger, pr, h)
-	imh := userHandler.NewHandlerUser(app.Logger, imc)
-	ph := profileHandler.NewHandlerProfile(app.Logger, puc)
+	im := entity.NewIdentity(app.config, app.Logger)
+	pr := psql.NewProfileRepo(app.Logger, app.db.psql)
+	imc := usecases.NewUserUseCases(app.Logger, im)
+	puc := usecases.NewProfileUseCases(app.Logger, pr, h)
+	imh := http.NewUserHandler(app.Logger, imc)
+	ph := http.NewProfileHandler(app.Logger, puc)
 	grp := app.fiber.Group(prefix)
 	middlewares.InitFiberMiddlewares(
 		app.fiber, app.config, app.Logger, grp, imh, ph, InitPublicRoutes, InitProtectedRoutes)

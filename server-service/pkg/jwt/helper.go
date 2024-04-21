@@ -7,16 +7,15 @@ import (
 	"strings"
 )
 
-type JwtHelper struct {
+type Helper struct {
 	claims       jwt.MapClaims
 	realmRoles   []string
 	accountRoles []string
 	scopes       []string
 }
 
-func NewJwtHelper(claims jwt.MapClaims) *JwtHelper {
-
-	return &JwtHelper{
+func NewHelper(claims jwt.MapClaims) *Helper {
+	return &Helper{
 		claims:       claims,
 		realmRoles:   parseRealmRoles(claims),
 		accountRoles: parseAccountRoles(claims),
@@ -24,16 +23,16 @@ func NewJwtHelper(claims jwt.MapClaims) *JwtHelper {
 	}
 }
 
-func (j *JwtHelper) GetUserId() (string, error) {
-	return j.claims.GetSubject()
+func (h *Helper) GetUserId() (string, error) {
+	return h.claims.GetSubject()
 }
 
-func (j *JwtHelper) IsUserInRealmRole(role string) bool {
-	return goutil.Contains(j.realmRoles, role)
+func (h *Helper) IsUserInRealmRole(role string) bool {
+	return goutil.Contains(h.realmRoles, role)
 }
 
-func (j *JwtHelper) TokenHasScope(scope string) bool {
-	return goutil.Contains(j.scopes, scope)
+func (h *Helper) TokenHasScope(scope string) bool {
+	return goutil.Contains(h.scopes, scope)
 }
 
 func parseRealmRoles(claims jwt.MapClaims) []string {

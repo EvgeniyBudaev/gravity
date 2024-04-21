@@ -1,4 +1,4 @@
-package error
+package api
 
 import "fmt"
 
@@ -13,9 +13,9 @@ type CustomError struct {
 	Err        error
 }
 
-func NewCustomError(err error, httpStatusCode int) error {
+func NewCustomError(err error, statusCode int) error {
 	return &CustomError{
-		StatusCode: httpStatusCode,
+		StatusCode: statusCode,
 		Err:        err,
 	}
 }

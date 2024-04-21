@@ -1,12 +1,11 @@
 package app
 
 import (
-	"github.com/EvgeniyBudaev/gravity/server-service/internal/handler/profile"
-	"github.com/EvgeniyBudaev/gravity/server-service/internal/handler/user"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http"
 	"github.com/gofiber/fiber/v2"
 )
 
-func InitPublicRoutes(grp fiber.Router, imh *user.HandlerUser, ph *profile.HandlerProfile) {
+func InitPublicRoutes(grp fiber.Router, imh *http.UserHandler, ph *http.ProfileHandler) {
 	grp.Post("/user/register", imh.PostRegisterHandler())
 	grp.Put("/user/update", imh.UpdateUserHandler())
 	grp.Delete("/user/delete", imh.DeleteUserHandler())
@@ -35,5 +34,5 @@ func InitPublicRoutes(grp fiber.Router, imh *user.HandlerUser, ph *profile.Handl
 	grp.Post("/complaint/add", ph.AddComplaintHandler())
 }
 
-func InitProtectedRoutes(grp fiber.Router, ph *profile.HandlerProfile) {
+func InitProtectedRoutes(grp fiber.Router, ph *http.ProfileHandler) {
 }

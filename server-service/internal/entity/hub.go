@@ -1,4 +1,4 @@
-package hub
+package entity
 
 type Content struct {
 	ChatID   uint64 `json:"chat_id"`

@@ -1,4 +1,4 @@
-package searching
+package entity
 
 import (
 	"fmt"

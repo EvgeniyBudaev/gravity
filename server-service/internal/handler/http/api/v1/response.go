@@ -1,24 +1,22 @@
-package response
+package api
 
 import (
 	"errors"
-	errorDomain "github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http/api/v1/error"
-	"github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http/api/v1/success"
 	"github.com/gofiber/fiber/v2"
 	"net/http"
 )
 
 func WrapError(ctf *fiber.Ctx, err error, httpStatusCode int) error {
-	var customError *errorDomain.CustomError
+	var customError *CustomError
 	if errors.As(err, &customError) {
-		msg := errorDomain.ResponseError{
+		msg := ResponseError{
 			StatusCode: customError.StatusCode,
 			Success:    false,
 			Message:    customError.Err.Error(),
 		}
 		return ctf.Status(customError.StatusCode).JSON(msg)
 	}
-	msg := errorDomain.ResponseError{
+	msg := ResponseError{
 		StatusCode: httpStatusCode,
 		Success:    false,
 		Message:    err.Error(),
@@ -27,7 +25,7 @@ func WrapError(ctf *fiber.Ctx, err error, httpStatusCode int) error {
 }
 
 func WrapOk(ctf *fiber.Ctx, data interface{}) error {
-	msg := success.Success{
+	msg := Success{
 		Data:       data,
 		StatusCode: http.StatusOK,
 		Success:    true,
@@ -36,7 +34,7 @@ func WrapOk(ctf *fiber.Ctx, data interface{}) error {
 }
 
 func WrapCreated(ctf *fiber.Ctx, data interface{}) error {
-	msg := success.Success{
+	msg := Success{
 		Data:       data,
 		StatusCode: http.StatusCreated,
 		Success:    true,
