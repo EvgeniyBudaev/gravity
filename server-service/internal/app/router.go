@@ -5,34 +5,34 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func InitPublicRoutes(grp fiber.Router, imh *http.UserHandler, ph *http.ProfileHandler) {
-	grp.Post("/user/register", imh.PostRegisterHandler())
-	grp.Put("/user/update", imh.UpdateUserHandler())
-	grp.Delete("/user/delete", imh.DeleteUserHandler())
+func InitPublicRoutes(r fiber.Router, uh *http.UserHandler, ph *http.ProfileHandler) {
+	r.Post("/user/register", uh.PostRegisterHandler())
+	r.Put("/user/update", uh.UpdateUserHandler())
+	r.Delete("/user/delete", uh.DeleteUserHandler())
 
-	grp.Post("/profile/add", ph.AddProfileHandler())
-	grp.Get("/profile/list", ph.GetProfileListHandler())
-	grp.Get("/profile/session/:id", ph.GetProfileBySessionIDHandler())
-	grp.Get("/profile/detail/:id", ph.GetProfileDetailHandler())
-	grp.Post("/profile/edit", ph.UpdateProfileHandler())
-	grp.Post("/profile/delete", ph.DeleteProfileHandler())
-	grp.Post("/profile/image/delete", ph.DeleteProfileImageHandler())
+	r.Post("/profile/add", ph.AddProfileHandler())
+	r.Get("/profile/list", ph.GetProfileListHandler())
+	r.Get("/profile/session/:id", ph.GetProfileBySessionIDHandler())
+	r.Get("/profile/detail/:id", ph.GetProfileDetailHandler())
+	r.Post("/profile/edit", ph.UpdateProfileHandler())
+	r.Post("/profile/delete", ph.DeleteProfileHandler())
+	r.Post("/profile/image/delete", ph.DeleteProfileImageHandler())
 
-	grp.Post("/review/add", ph.AddReviewHandler())
-	grp.Post("/review/update", ph.UpdateReviewHandler())
-	grp.Post("/review/delete", ph.DeleteReviewHandler())
-	grp.Get("/review/list", ph.GetReviewListHandler())
-	grp.Get("/review/detail/:id", ph.GetReviewByIDHandler())
+	r.Post("/review/add", ph.AddReviewHandler())
+	r.Post("/review/update", ph.UpdateReviewHandler())
+	r.Post("/review/delete", ph.DeleteReviewHandler())
+	r.Get("/review/list", ph.GetReviewListHandler())
+	r.Get("/review/detail/:id", ph.GetReviewByIDHandler())
 
-	grp.Post("/like/add", ph.AddLikeHandler())
-	grp.Put("/like/update", ph.UpdateLikeHandler())
-	grp.Post("/like/delete", ph.DeleteLikeHandler())
+	r.Post("/like/add", ph.AddLikeHandler())
+	r.Put("/like/update", ph.UpdateLikeHandler())
+	r.Post("/like/delete", ph.DeleteLikeHandler())
 
-	grp.Post("/block/add", ph.AddBlockHandler())
-	grp.Put("/block/update", ph.UpdateBlockHandler())
+	r.Post("/block/add", ph.AddBlockHandler())
+	r.Put("/block/update", ph.UpdateBlockHandler())
 
-	grp.Post("/complaint/add", ph.AddComplaintHandler())
+	r.Post("/complaint/add", ph.AddComplaintHandler())
 }
 
-func InitProtectedRoutes(grp fiber.Router, ph *http.ProfileHandler) {
+func InitProtectedRoutes(r fiber.Router, ph *http.ProfileHandler) {
 }

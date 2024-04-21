@@ -1679,7 +1679,7 @@ func (h *ProfileHandler) DeleteLikeHandler() fiber.Handler {
 		if !isExistLike {
 			h.logger.Debug("error func DeleteLikeHandler, method !isExistLike by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			msg := api.ResponseError{
+			msg := api.ErrorResponse{
 				StatusCode: http.StatusNotFound,
 				Success:    false,
 				Message:    "not found",
@@ -1736,7 +1736,7 @@ func (h *ProfileHandler) UpdateLikeHandler() fiber.Handler {
 		if !isExist {
 			h.logger.Debug("error func UpdateLikeHandler, method !isExist by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			msg := api.ResponseError{
+			msg := api.ErrorResponse{
 				StatusCode: http.StatusNotFound,
 				Success:    false,
 				Message:    "not found",
@@ -1852,7 +1852,7 @@ func (h *ProfileHandler) UpdateBlockHandler() fiber.Handler {
 		if !isExist {
 			h.logger.Debug("error func UpdateBlockHandler, method !isExist by path "+
 				" internal/handler/profile/profile.go", zap.Error(err))
-			msg := api.ResponseError{
+			msg := api.ErrorResponse{
 				StatusCode: http.StatusNotFound,
 				Success:    false,
 				Message:    "not found",

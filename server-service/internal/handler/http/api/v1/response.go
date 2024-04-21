@@ -9,14 +9,14 @@ import (
 func WrapError(ctf *fiber.Ctx, err error, httpStatusCode int) error {
 	var customError *CustomError
 	if errors.As(err, &customError) {
-		msg := ResponseError{
+		msg := ErrorResponse{
 			StatusCode: customError.StatusCode,
 			Success:    false,
 			Message:    customError.Err.Error(),
 		}
 		return ctf.Status(customError.StatusCode).JSON(msg)
 	}
-	msg := ResponseError{
+	msg := ErrorResponse{
 		StatusCode: httpStatusCode,
 		Success:    false,
 		Message:    err.Error(),

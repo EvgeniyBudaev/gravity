@@ -1,4 +1,3 @@
-// Package app - application module
 package app
 
 import (
@@ -49,7 +48,7 @@ func New() *App {
 	}
 	// Fiber
 	f := fiber.New(fiber.Config{
-		ReadBufferSize: 16384,
+		ReadBufferSize: 4 << 12,
 	})
 	// CORS
 	f.Use(cors.New(cors.Config{
