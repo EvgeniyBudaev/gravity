@@ -205,13 +205,17 @@ export const ProfileForm: FC<TProps> = ({ isEdit, lng, profile }) => {
   const handleSubmit = (formData: FormData) => {
     const formDataDto = new FormData();
     const displayName = formData.get(EProfileAddFormFields.DisplayName);
+    const firstName = formData.get(EProfileAddFormFields.FirstName);
+    const lastName = formData.get(EProfileAddFormFields.LastName);
     const mobileNumber = formData.get(EProfileAddFormFields.MobileNumber);
     const mobileNumberNormalized = normalizePhoneNumber(
       (mobileNumber ?? "").toString(),
     );
+    const email = formData.get(EProfileAddFormFields.Email);
     const password = formData.get(EProfileAddFormFields.Password);
     const passwordConfirm = formData.get(EProfileAddFormFields.PasswordConfirm);
     const description = formData.get(EProfileAddFormFields.Description);
+    const location = formData.get(EProfileAddFormFields.Location);
     const height = formData.get(EProfileAddFormFields.Height);
     const weight = formData.get(EProfileAddFormFields.Weight);
     formDataDto.append(
@@ -219,11 +223,11 @@ export const ProfileForm: FC<TProps> = ({ isEdit, lng, profile }) => {
       (displayName ?? "").toString(),
     );
     formDataDto.append(EProfileAddFormFields.Username, mobileNumberNormalized);
-    formDataDto.append(EProfileAddFormFields.Email, "");
     formDataDto.append(
       EProfileAddFormFields.MobileNumber,
       mobileNumberNormalized,
     );
+    formDataDto.append(EProfileAddFormFields.Email, (email ?? "").toString());
     formDataDto.append(
       EProfileAddFormFields.Description,
       (description ?? "").toString(),
@@ -257,10 +261,10 @@ export const ProfileForm: FC<TProps> = ({ isEdit, lng, profile }) => {
     );
     formDataDto.append(
       EProfileAddFormFields.TelegramUsername,
-      user?.username?.toString() ?? "-",
+      user?.username?.toString() ?? "unknown",
     );
-    formDataDto.append(EProfileAddFormFields.FirstName, firstName ?? "-");
-    formDataDto.append(EProfileAddFormFields.LastName, lastName ?? "-");
+    formDataDto.append(EProfileAddFormFields.FirstName, firstName ?? "unknown");
+    formDataDto.append(EProfileAddFormFields.LastName, lastName ?? "unknown");
     formDataDto.append(EProfileAddFormFields.QueryId, queryId ?? "0");
     formDataDto.append(EProfileAddFormFields.ChatId, (chatId ?? 0).toString());
     formDataDto.append(
@@ -379,6 +383,28 @@ export const ProfileForm: FC<TProps> = ({ isEdit, lng, profile }) => {
           />
         </Field>
         <Field>
+          <Input
+            defaultValue={firstName}
+            errors={state?.errors?.firstName}
+            isHiddenViewing={true}
+            isRequired={true}
+            label={t("common.form.field.firstName") ?? "First name"}
+            name={EProfileAddFormFields.FirstName}
+            type="text"
+          />
+        </Field>
+        <Field>
+          <Input
+            defaultValue={lastName}
+            errors={state?.errors?.lastName}
+            isHiddenViewing={true}
+            isRequired={true}
+            label={t("common.form.field.lastName") ?? "Last name"}
+            name={EProfileAddFormFields.LastName}
+            type="text"
+          />
+        </Field>
+        <Field>
           <PhoneInputMask
             defaultValue={isEdit ? keycloakSession?.user?.username : undefined}
             errors={state?.errors?.mobileNumber}
@@ -387,6 +413,16 @@ export const ProfileForm: FC<TProps> = ({ isEdit, lng, profile }) => {
             isRequired={true}
             label={t("common.form.field.mobileNumber") ?? "Mobile phone"}
             name={EProfileAddFormFields.MobileNumber}
+          />
+        </Field>
+        <Field>
+          <Input
+            errors={state?.errors?.email}
+            isHiddenViewing={true}
+            isRequired={true}
+            label={t("common.form.field.email") ?? "Email"}
+            name={EProfileAddFormFields.Email}
+            type="text"
           />
         </Field>
         {!isEdit && (
@@ -487,7 +523,6 @@ export const ProfileForm: FC<TProps> = ({ isEdit, lng, profile }) => {
           <Input
             defaultValue={location}
             errors={state?.errors?.location}
-            isRequired={true}
             isReadOnly={true}
             label={t("common.form.field.location") ?? "Location"}
             name={EProfileAddFormFields.Location}
