@@ -1,19 +1,19 @@
 import invariant from "tiny-invariant";
 
 export type EnvironmentType = {
-  API_URL: string;
-  NODE_ENV: string;
+  NEXT_PUBLIC_API_URL: string;
+  NEXT_PUBLIC_NODE_ENV: string;
 };
 
-const { API_URL, NODE_ENV } = process.env;
+const { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_NODE_ENV } = process.env;
 
-invariant(API_URL, "API_URL must be set in env file");
-invariant(NODE_ENV, "NODE_ENV must be set in env file");
+invariant(NEXT_PUBLIC_API_URL, "NEXT_PUBLIC_API_URL must be set in env file");
+invariant(NEXT_PUBLIC_NODE_ENV, "NEXT_PUBLIC_NODE_ENV must be set in env file");
 
 /**
  * Переменные окружения
  */
 export const Environment: EnvironmentType = {
-  API_URL,
-  NODE_ENV,
+  NEXT_PUBLIC_API_URL,
+  NEXT_PUBLIC_NODE_ENV,
 };

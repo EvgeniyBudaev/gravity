@@ -147,10 +147,7 @@
         },
         "filterSetup": "Set up filter",
         "name": "First name",
-        "firstName": "First name",
-        "lastName": "Last name",
-        "username": "Username for authorization",
-        "email": "Email"
+        "username": "Username for authorization"
       }
     },
     "title": {

@@ -45,7 +45,7 @@ export const getContentSecurityPolicy = (nonce?: string): string => {
   let script_src = "'self'";
   let script_src_elem = "'self'";
 
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NEXT_PUBLIC_NODE_ENV === "development") {
     script_src += " 'unsafe-inline' 'unsafe-eval'";
     script_src_elem += " 'unsafe-inline'";
   } else if (typeof nonce === "string" && nonce.length > 40) {
@@ -54,7 +54,7 @@ export const getContentSecurityPolicy = (nonce?: string): string => {
   }
 
   const connect_src =
-    process.env.NODE_ENV !== "development"
+    process.env.NEXT_PUBLIC_NODE_ENV !== "development"
       ? "'self' ws:"
       : "'self' ws://localhost:*";
 

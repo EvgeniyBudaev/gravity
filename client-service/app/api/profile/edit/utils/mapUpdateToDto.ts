@@ -5,7 +5,7 @@ type TProps = {
   [EProfileEditFormFields.Id]: string;
   [EProfileEditFormFields.Username]: string;
   [EProfileEditFormFields.DisplayName]: string;
-  [EProfileEditFormFields.Email]?: string | null | undefined;
+  [EProfileEditFormFields.Email]: string;
   [EProfileEditFormFields.MobileNumber]: string;
   [EProfileEditFormFields.Birthday]: string;
   [EProfileEditFormFields.Gender]: string;
@@ -18,8 +18,8 @@ type TProps = {
   [EProfileEditFormFields.Image]?: TFile | TFile[] | null | undefined;
   [EProfileEditFormFields.TelegramID]: string;
   [EProfileEditFormFields.TelegramUsername]: string;
-  [EProfileEditFormFields.FirstName]?: string | null | undefined;
-  [EProfileEditFormFields.LastName]?: string | null | undefined;
+  [EProfileEditFormFields.FirstName]: string;
+  [EProfileEditFormFields.LastName]: string;
   [EProfileEditFormFields.LanguageCode]: string;
   [EProfileEditFormFields.AllowsWriteToPm]: string;
   [EProfileEditFormFields.QueryId]: string;
@@ -34,11 +34,11 @@ type TProps = {
 };
 
 type TUpdateForm = {
-  [EProfileEditFormFields.Email]?: string | null | undefined;
+  [EProfileEditFormFields.Email]: string;
   [EProfileEditFormFields.MobileNumber]: string;
   [EProfileEditFormFields.Username]: string;
-  [EProfileEditFormFields.FirstName]?: string | null | undefined;
-  [EProfileEditFormFields.LastName]?: string | null | undefined;
+  [EProfileEditFormFields.FirstName]: string;
+  [EProfileEditFormFields.LastName]: string;
 };
 
 type TProfileForm = {
@@ -56,8 +56,8 @@ type TProfileForm = {
   [EProfileEditFormFields.Image]?: TFile | TFile[] | null | undefined;
   [EProfileEditFormFields.TelegramID]: string;
   [EProfileEditFormFields.TelegramUsername]: string;
-  [EProfileEditFormFields.FirstName]?: string | null | undefined;
-  [EProfileEditFormFields.LastName]?: string | null | undefined;
+  [EProfileEditFormFields.FirstName]: string;
+  [EProfileEditFormFields.LastName]: string;
   [EProfileEditFormFields.LanguageCode]: string;
   [EProfileEditFormFields.AllowsWriteToPm]: string;
   [EProfileEditFormFields.QueryId]: string;
@@ -95,8 +95,8 @@ export const mapUpdateToDto: TMapUpdateToDto = (props) => {
       [EProfileEditFormFields.Image]: props?.image ?? null,
       [EProfileEditFormFields.TelegramID]: props.telegramId,
       [EProfileEditFormFields.TelegramUsername]: props.telegramUserName,
-      [EProfileEditFormFields.FirstName]: props?.firstName ?? "",
-      [EProfileEditFormFields.LastName]: props?.lastName ?? "",
+      [EProfileEditFormFields.FirstName]: props.firstName,
+      [EProfileEditFormFields.LastName]: props.lastName,
       [EProfileEditFormFields.LanguageCode]: props.languageCode,
       [EProfileEditFormFields.AllowsWriteToPm]: props.allowsWriteToPm,
       [EProfileEditFormFields.QueryId]: props.queryId,
@@ -110,11 +110,11 @@ export const mapUpdateToDto: TMapUpdateToDto = (props) => {
       [EProfileEditFormFields.Size]: props.size,
     },
     updateForm: {
-      [EProfileEditFormFields.Email]: props?.email ?? "",
+      [EProfileEditFormFields.Email]: props.email,
       [EProfileEditFormFields.MobileNumber]: props.mobileNumber,
       [EProfileEditFormFields.Username]: props.userName,
-      [EProfileEditFormFields.FirstName]: props?.firstName ?? "",
-      [EProfileEditFormFields.LastName]: props?.lastName ?? "",
+      [EProfileEditFormFields.FirstName]: props.firstName,
+      [EProfileEditFormFields.LastName]: props.lastName,
     },
   };
 };

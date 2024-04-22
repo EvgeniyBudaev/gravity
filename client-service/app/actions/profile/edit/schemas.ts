@@ -12,10 +12,10 @@ import {
   NAME_REGEXP,
 } from "@/app/shared/validation";
 import {
-  // EMAIL_ERROR_MESSAGE,
-  // EMAIL_NOT_CYRILLIC_ERROR_MESSAGE,
-  // EMAIL_NOT_CYRILLIC_REGEXP,
-  // EMAIL_REGEXP,
+  EMAIL_ERROR_MESSAGE,
+  EMAIL_NOT_CYRILLIC_ERROR_MESSAGE,
+  EMAIL_NOT_CYRILLIC_REGEXP,
+  EMAIL_REGEXP,
   PHONE_ERROR_MESSAGE,
   PHONE_REGEXP,
 } from "@/app/shared/validation/constants";
@@ -41,9 +41,8 @@ export const editProfileFormSchema = zfd
     [EProfileEditFormFields.Email]: z
       .string()
       .trim()
-      // .regex(EMAIL_NOT_CYRILLIC_REGEXP, EMAIL_NOT_CYRILLIC_ERROR_MESSAGE)
-      // .regex(EMAIL_REGEXP, EMAIL_ERROR_MESSAGE)
-      .nullish(),
+      .regex(EMAIL_NOT_CYRILLIC_REGEXP, EMAIL_NOT_CYRILLIC_ERROR_MESSAGE)
+      .regex(EMAIL_REGEXP, EMAIL_ERROR_MESSAGE),
     [EProfileEditFormFields.Birthday]: z
       .string()
       .trim()

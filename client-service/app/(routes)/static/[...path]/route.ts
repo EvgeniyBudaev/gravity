@@ -6,5 +6,5 @@ export async function GET(
   request: Request,
   { params: { path } }: { params: { path: string[] } },
 ) {
-  return fetch(`${Environment.API_URL}/static/${path.join("/")}`);
+  return fetch(`${Environment.NEXT_PUBLIC_API_URL}/static/${path.join("/")}`);
 }

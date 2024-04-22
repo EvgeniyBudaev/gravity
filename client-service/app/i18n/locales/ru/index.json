@@ -52,7 +52,10 @@
     "form": {
       "field": {
         "displayName": "Имя для отображения",
+        "firstName": "Имя",
+        "lastName": "Фамилия",
         "mobileNumber": "Мобильный номер",
+        "email": "Электронная почта",
         "password": "Пароль",
         "passwordConfirm": "Подтверждение пароля",
         "birthday": "Дата рождения",
