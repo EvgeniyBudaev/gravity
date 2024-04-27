@@ -13,6 +13,6 @@ func main() {
 		os.Interrupt, os.Kill, syscall.SIGQUIT, syscall.SIGTERM)
 	defer cancel()
 
-	app := app.New()
-	app.Run(ctx)
+	a := app.New()
+	a.Run(ctx)
 }
