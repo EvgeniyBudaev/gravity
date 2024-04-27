@@ -1,29 +1,28 @@
-package user
+package http
 
 import (
-	r "github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http/api/v1/response"
+	r "github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http/api/v1"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/logger"
-	"github.com/EvgeniyBudaev/gravity/server-service/internal/useCase/user"
-	userUseCase "github.com/EvgeniyBudaev/gravity/server-service/internal/useCase/user"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/usecases"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	"net/http"
 )
 
-type HandlerUser struct {
+type UserHandler struct {
 	logger logger.Logger
-	uc     *userUseCase.UseCaseUser
+	uc     *usecases.UseCaseUser
 }
 
-func NewHandlerUser(l logger.Logger, uc *userUseCase.UseCaseUser) *HandlerUser {
-	return &HandlerUser{logger: l, uc: uc}
+func NewUserHandler(l logger.Logger, uc *usecases.UseCaseUser) *UserHandler {
+	return &UserHandler{logger: l, uc: uc}
 }
 
-func (h *HandlerUser) PostRegisterHandler() fiber.Handler {
+func (h *UserHandler) PostRegisterHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		var ctx = ctf.UserContext()
 		h.logger.Info("POST /api/v1/user/register")
-		var request = user.RegisterRequest{}
+		var request = usecases.RegisterRequest{}
 		err := ctf.BodyParser(&request)
 		if err != nil {
 			h.logger.Debug("error func PostRegisterHandler, method BodyParser by path internal/handler/user/user.go",
@@ -40,11 +39,11 @@ func (h *HandlerUser) PostRegisterHandler() fiber.Handler {
 	}
 }
 
-func (h *HandlerUser) UpdateUserHandler() fiber.Handler {
+func (h *UserHandler) UpdateUserHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		var ctx = ctf.UserContext()
 		h.logger.Info("POST /api/v1/user/update")
-		var request = user.RequestUpdateUser{}
+		var request = usecases.RequestUpdateUser{}
 		err := ctf.BodyParser(&request)
 		if err != nil {
 			h.logger.Debug("error func UpdateUserHandle, method BodyParser by path internal/handler/user/user.go",
@@ -61,11 +60,11 @@ func (h *HandlerUser) UpdateUserHandler() fiber.Handler {
 	}
 }
 
-func (h *HandlerUser) DeleteUserHandler() fiber.Handler {
+func (h *UserHandler) DeleteUserHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		var ctx = ctf.UserContext()
 		h.logger.Info("POST /api/v1/user/delete")
-		var request = user.RequestDeleteUser{}
+		var request = usecases.RequestDeleteUser{}
 		err := ctf.BodyParser(&request)
 		if err != nil {
 			h.logger.Debug("error func DeleteUserHandler, method BodyParser by path internal/handler/user/user.go",
@@ -82,11 +81,11 @@ func (h *HandlerUser) DeleteUserHandler() fiber.Handler {
 	}
 }
 
-func (h *HandlerUser) GetUserListHandler() fiber.Handler {
+func (h *UserHandler) GetUserListHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		var ctx = ctf.UserContext()
 		h.logger.Info("GET /api/v1/user/list")
-		query := user.QueryParamsUserList{}
+		query := usecases.QueryParamsUserList{}
 		if err := ctf.QueryParser(&query); err != nil {
 			h.logger.Debug("error func GetUserListHandler, method QueryParser by path"+
 				" internal/handler/user/user.go", zap.Error(err))

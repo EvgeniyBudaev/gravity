@@ -4,7 +4,7 @@ package app
 import (
 	"context"
 	"fmt"
-	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity/hub"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"go.uber.org/zap"
 	"time"
@@ -44,7 +44,7 @@ func printIntro(chatId int64) {
 }
 
 // StartBot - launches the bot
-func (app *App) StartBot(ctx context.Context, msgChan <-chan *hub.Content) error {
+func (app *App) StartBot(ctx context.Context, msgChan <-chan *entity.Content) error {
 	var err error
 	// Telegram Bot
 	if bot, err = tgbotapi.NewBotAPI(app.config.TelegramBotToken); err != nil {

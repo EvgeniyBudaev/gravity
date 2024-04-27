@@ -1,4 +1,4 @@
-package success
+package api
 
 type Success struct {
 	Data       any  `json:"data"`

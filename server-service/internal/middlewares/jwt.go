@@ -7,7 +7,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/config"
-	r "github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http/api/v1/response"
+	r "github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http/api/v1"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/logger"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/shared/enums"
 	"github.com/Nerzal/gocloak/v13"

@@ -1,7 +1,6 @@
-package profile
+package entity
 
 import (
-	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity/pagination"
 	"time"
 )
 
@@ -106,7 +105,7 @@ type ContentListProfile struct {
 }
 
 type ResponseListProfile struct {
-	*pagination.Pagination
+	*Pagination
 	Content []*ContentListProfile `json:"content"`
 }
 
@@ -147,7 +146,7 @@ type ResponseProfileDetail struct {
 }
 
 type QueryParamsProfileList struct {
-	pagination.Pagination
+	Pagination
 	SessionID    string `json:"sessionId"`
 	AgeFrom      string `json:"ageFrom"`
 	AgeTo        string `json:"ageTo"`
@@ -276,7 +275,7 @@ type ResponseReviewProfile struct {
 }
 
 type QueryParamsReviewList struct {
-	pagination.Pagination
+	Pagination
 	ProfileID string `json:"profileId"`
 }
 
@@ -294,7 +293,7 @@ type ContentReviewProfile struct {
 }
 
 type ResponseListReview struct {
-	*pagination.Pagination
+	*Pagination
 	RatingAverage            float32                 `json:"ratingAverage"`
 	CountItemsTodayByProfile uint                    `json:"countItemsTodayByProfile"`
 	Content                  []*ContentReviewProfile `json:"content"`

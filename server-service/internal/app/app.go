@@ -1,10 +1,9 @@
-// Package app - application module
 package app
 
 import (
 	"context"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/config"
-	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity/hub"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/logger"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -21,36 +20,35 @@ type App struct {
 	fiber  *fiber.App
 }
 
-// NewApp - application designer
-func NewApp() *App {
+func New() *App {
 	// Default logger
-	defaultLogger, err := logger.NewLogger(logger.GetDefaultLevel())
+	defaultLogger, err := logger.New(logger.GetDefaultLevel())
 	if err != nil {
-		log.Fatal("error func NewApp, method NewLogger by path internal/app/app.go", err)
+		log.Fatal("error func New, method NewLogger by path internal/app/app.go", err)
 	}
 	// Config
 	cfg, err := config.Load(defaultLogger)
 	if err != nil {
-		log.Fatal("error func NewApp, method Load by path internal/app/app.go", err)
+		log.Fatal("error func New, method Load by path internal/app/app.go", err)
 	}
 	// Logger level
-	loggerLevel, err := logger.NewLogger(cfg.LoggerLevel)
+	loggerLevel, err := logger.New(cfg.LoggerLevel)
 	if err != nil {
-		log.Fatal("error func NewApp, method NewLogger by path internal/app/app.go", err)
+		log.Fatal("error func New, method NewLogger by path internal/app/app.go", err)
 	}
 	// Database connection
 	postgresConnection, err := newPostgresConnection(cfg)
 	if err != nil {
-		log.Fatal("error func NewApp, method newPostgresConnection by path internal/app/app.go", err)
+		log.Fatal("error func New, method newPostgresConnection by path internal/app/app.go", err)
 	}
 	database := NewDatabase(loggerLevel, postgresConnection)
 	err = postgresConnection.Ping()
 	if err != nil {
-		log.Fatal("error func NewApp, method NewDatabase by path internal/app/app.go", err)
+		log.Fatal("error func New, method NewDatabase by path internal/app/app.go", err)
 	}
 	// Fiber
 	f := fiber.New(fiber.Config{
-		ReadBufferSize: 16384,
+		ReadBufferSize: 4 << 12,
 	})
 	// CORS
 	f.Use(cors.New(cors.Config{
@@ -66,11 +64,11 @@ func NewApp() *App {
 	}
 }
 
-// Run - launching the application
+// Run launches the application
 func (app *App) Run(ctx context.Context) {
 	var wg sync.WaitGroup
-	h := hub.NewHub()
-	msgChan := make(chan *hub.Content, 1) // msgChan - канал для передачи сообщений
+	h := entity.NewHub()
+	msgChan := make(chan *entity.Content, 1) // msgChan - канал для передачи сообщений
 	wg.Add(1)
 	go func() {
 		if err := app.StartHTTPServer(ctx, h); err != nil {

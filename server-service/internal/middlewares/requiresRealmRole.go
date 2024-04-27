@@ -2,10 +2,10 @@ package middlewares
 
 import (
 	"fmt"
-	r "github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http/api/v1/response"
+	r "github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http/api/v1"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/logger"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/shared/enums"
-	"github.com/EvgeniyBudaev/gravity/server-service/internal/shared/jwt"
+	"github.com/EvgeniyBudaev/gravity/server-service/pkg/jwt"
 	"github.com/gofiber/fiber/v2"
 	golangJwt "github.com/golang-jwt/jwt/v5"
 	"go.uber.org/zap"
@@ -16,7 +16,7 @@ func NewRequiresRealmRole(role string, logger logger.Logger) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var ctx = c.UserContext()
 		claims := ctx.Value(enums.ContextKeyClaims).(golangJwt.MapClaims)
-		jwtHelper := jwt.NewJwtHelper(claims)
+		jwtHelper := jwt.NewHelper(claims)
 		if !jwtHelper.IsUserInRealmRole(role) {
 			err := fmt.Errorf("role authorization failed")
 			logger.Debug("error while NewRequiresRealmRole. Error in IsUserInRealmRole", zap.Error(err))
