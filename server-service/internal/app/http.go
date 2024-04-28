@@ -15,8 +15,8 @@ var prefix = "/api/v1"
 func (app *App) StartHTTPServer(ctx context.Context, h *entity.Hub) error {
 	app.fiber.Static("/static", "./static")
 	done := make(chan struct{})
-	im := entity.NewIdentity(app.config, app.Logger)
 	pr := psql.NewProfileRepo(app.Logger, app.db.psql)
+	im := usecases.NewIdentity(app.config, app.Logger)
 	imc := usecases.NewUserUseCases(app.Logger, im)
 	puc := usecases.NewProfileUseCases(app.Logger, pr, h)
 	imh := http.NewUserHandler(app.Logger, imc)

@@ -6,7 +6,7 @@ import (
 	"errors"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/logger"
-	useCaseProfile "github.com/EvgeniyBudaev/gravity/server-service/internal/usecases"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/usecases"
 	"go.uber.org/zap"
 	"math"
 	"strconv"
@@ -18,7 +18,7 @@ type ProfileRepo struct {
 	db     *sql.DB
 }
 
-func NewProfileRepo(logger logger.Logger, db *sql.DB) useCaseProfile.ProfileRepo {
+func NewProfileRepo(logger logger.Logger, db *sql.DB) usecases.ProfileRepo {
 	return &ProfileRepo{
 		logger: logger,
 		db:     db,

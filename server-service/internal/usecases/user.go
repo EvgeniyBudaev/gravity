@@ -13,33 +13,7 @@ type Identity interface {
 	CreateUser(ctx context.Context, user gocloak.User, password string, role string) (*gocloak.User, error)
 	UpdateUser(ctx context.Context, user gocloak.User) (*gocloak.User, error)
 	DeleteUser(ctx context.Context, user gocloak.User) error
-	GetUserList(ctx context.Context, query QueryParamsUserList) ([]*gocloak.User, error)
-}
-
-type RegisterRequest struct {
-	Username     string `json:"username"`
-	Password     string `json:"password"`
-	FirstName    string `json:"firstName"`
-	LastName     string `json:"lastName"`
-	Email        string `json:"email"`
-	MobileNumber string `json:"mobileNumber"`
-}
-
-type RequestUpdateUser struct {
-	ID           *string `json:"id"`
-	Username     string  `json:"username"`
-	FirstName    string  `json:"firstName"`
-	LastName     string  `json:"lastName"`
-	Email        string  `json:"email"`
-	MobileNumber string  `json:"mobileNumber"`
-}
-
-type RequestDeleteUser struct {
-	ID *string `json:"id"`
-}
-
-type QueryParamsUserList struct {
-	entity.Searching
+	GetUserList(ctx context.Context, query entity.QueryParamsUserList) ([]*gocloak.User, error)
 }
 
 type UseCaseUser struct {
@@ -54,7 +28,7 @@ func NewUserUseCases(l logger.Logger, i Identity) *UseCaseUser {
 	}
 }
 
-func (uc *UseCaseUser) Register(ctx context.Context, request RegisterRequest) (*gocloak.User, error) {
+func (uc *UseCaseUser) Register(ctx context.Context, request entity.RegisterRequest) (*gocloak.User, error) {
 	var user = gocloak.User{
 		Username:      gocloak.StringP(request.Username),
 		FirstName:     gocloak.StringP(request.FirstName),
@@ -75,7 +49,7 @@ func (uc *UseCaseUser) Register(ctx context.Context, request RegisterRequest) (*
 	return response, nil
 }
 
-func (uc *UseCaseUser) UpdateUser(ctx context.Context, request RequestUpdateUser) (*gocloak.User, error) {
+func (uc *UseCaseUser) UpdateUser(ctx context.Context, request entity.RequestUpdateUser) (*gocloak.User, error) {
 	var user = gocloak.User{
 		ID:            request.ID,
 		Username:      gocloak.StringP(request.Username),
@@ -98,7 +72,7 @@ func (uc *UseCaseUser) UpdateUser(ctx context.Context, request RequestUpdateUser
 	return response, nil
 }
 
-func (uc *UseCaseUser) DeleteUser(ctx context.Context, request RequestDeleteUser) error {
+func (uc *UseCaseUser) DeleteUser(ctx context.Context, request entity.RequestDeleteUser) error {
 	var user = gocloak.User{
 		ID: request.ID,
 	}
@@ -111,7 +85,7 @@ func (uc *UseCaseUser) DeleteUser(ctx context.Context, request RequestDeleteUser
 	return nil
 }
 
-func (uc *UseCaseUser) GetUserList(ctx context.Context, query QueryParamsUserList) ([]*gocloak.User, error) {
+func (uc *UseCaseUser) GetUserList(ctx context.Context, query entity.QueryParamsUserList) ([]*gocloak.User, error) {
 	response, err := uc.identity.GetUserList(ctx, query)
 	if err != nil {
 		uc.logger.Debug("error func GetUserList, method GetUserList by path internal/usecases/user/user.go",

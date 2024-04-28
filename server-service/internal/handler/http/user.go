@@ -1,7 +1,8 @@
 package http
 
 import (
-	r "github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http/api/v1"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http/api/v1"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/logger"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/usecases"
 	"github.com/gofiber/fiber/v2"
@@ -22,20 +23,20 @@ func (h *UserHandler) PostRegisterHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		var ctx = ctf.UserContext()
 		h.logger.Info("POST /api/v1/user/register")
-		var request = usecases.RegisterRequest{}
+		var request = entity.RegisterRequest{}
 		err := ctf.BodyParser(&request)
 		if err != nil {
 			h.logger.Debug("error func PostRegisterHandler, method BodyParser by path internal/handler/user/user.go",
 				zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		response, err := h.uc.Register(ctx, request)
 		if err != nil {
 			h.logger.Debug("error func PostRegisterHandler, method Register by path internal/handler/user/user.go",
 				zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		return r.WrapCreated(ctf, response)
+		return api.WrapCreated(ctf, response)
 	}
 }
 
@@ -43,20 +44,20 @@ func (h *UserHandler) UpdateUserHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		var ctx = ctf.UserContext()
 		h.logger.Info("POST /api/v1/user/update")
-		var request = usecases.RequestUpdateUser{}
+		var request = entity.RequestUpdateUser{}
 		err := ctf.BodyParser(&request)
 		if err != nil {
 			h.logger.Debug("error func UpdateUserHandle, method BodyParser by path internal/handler/user/user.go",
 				zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		response, err := h.uc.UpdateUser(ctx, request)
 		if err != nil {
 			h.logger.Debug("error func UpdateUserHandle, method UpdateUser by path internal/handler/user/user.go",
 				zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		return r.WrapCreated(ctf, response)
+		return api.WrapCreated(ctf, response)
 	}
 }
 
@@ -64,20 +65,20 @@ func (h *UserHandler) DeleteUserHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		var ctx = ctf.UserContext()
 		h.logger.Info("POST /api/v1/user/delete")
-		var request = usecases.RequestDeleteUser{}
+		var request = entity.RequestDeleteUser{}
 		err := ctf.BodyParser(&request)
 		if err != nil {
 			h.logger.Debug("error func DeleteUserHandler, method BodyParser by path internal/handler/user/user.go",
 				zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
 		err = h.uc.DeleteUser(ctx, request)
 		if err != nil {
 			h.logger.Debug("error func DeleteUserHandler, method DeleteUser by path internal/handler/user/user.go",
 				zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		return r.WrapCreated(ctf, nil)
+		return api.WrapCreated(ctf, nil)
 	}
 }
 
@@ -85,7 +86,7 @@ func (h *UserHandler) GetUserListHandler() fiber.Handler {
 	return func(ctf *fiber.Ctx) error {
 		var ctx = ctf.UserContext()
 		h.logger.Info("GET /api/v1/user/list")
-		query := usecases.QueryParamsUserList{}
+		query := entity.QueryParamsUserList{}
 		if err := ctf.QueryParser(&query); err != nil {
 			h.logger.Debug("error func GetUserListHandler, method QueryParser by path"+
 				" internal/handler/user/user.go", zap.Error(err))
@@ -95,8 +96,8 @@ func (h *UserHandler) GetUserListHandler() fiber.Handler {
 		if err != nil {
 			h.logger.Debug("error func GetUserListHandler, method GetUserList by path"+
 				" internal/handler/user/user.go", zap.Error(err))
-			return r.WrapError(ctf, err, http.StatusBadRequest)
+			return api.WrapError(ctf, err, http.StatusBadRequest)
 		}
-		return r.WrapOk(ctf, response)
+		return api.WrapOk(ctf, response)
 	}
 }

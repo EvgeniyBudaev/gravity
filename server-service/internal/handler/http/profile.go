@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity"
-	api "github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http/api/v1"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/handler/http/api/v1"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/logger"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/usecases"
 	"github.com/gofiber/fiber/v2"

@@ -1,9 +1,10 @@
-package entity
+package usecases
 
 import (
 	"context"
 	"fmt"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/config"
+	"github.com/EvgeniyBudaev/gravity/server-service/internal/entity"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/logger"
 	"github.com/Nerzal/gocloak/v13"
 	"github.com/pkg/errors"
@@ -11,7 +12,7 @@ import (
 	"strings"
 )
 
-type Identity struct {
+type IdentityUseCases struct {
 	BaseUrl      string
 	Realm        string
 	ClientId     string
@@ -19,8 +20,8 @@ type Identity struct {
 	logger       logger.Logger
 }
 
-func NewIdentity(config *config.Config, l logger.Logger) *Identity {
-	return &Identity{
+func NewIdentity(config *config.Config, l logger.Logger) *IdentityUseCases {
+	return &IdentityUseCases{
 		BaseUrl:      config.BaseUrl,
 		Realm:        config.Realm,
 		ClientId:     config.ClientId,
@@ -29,7 +30,7 @@ func NewIdentity(config *config.Config, l logger.Logger) *Identity {
 	}
 }
 
-func (i *Identity) loginRestApiClient(ctx context.Context) (*gocloak.JWT, error) {
+func (i *IdentityUseCases) loginRestApiClient(ctx context.Context) (*gocloak.JWT, error) {
 	client := gocloak.NewClient(i.BaseUrl)
 	token, err := client.LoginClient(ctx, i.ClientId, i.ClientSecret, i.Realm)
 	if err != nil {
@@ -39,7 +40,7 @@ func (i *Identity) loginRestApiClient(ctx context.Context) (*gocloak.JWT, error)
 	return token, nil
 }
 
-func (i *Identity) CreateUser(ctx context.Context, user gocloak.User, password string, role string) (*gocloak.User, error) {
+func (i *IdentityUseCases) CreateUser(ctx context.Context, user gocloak.User, password string, role string) (*gocloak.User, error) {
 	token, err := i.loginRestApiClient(ctx)
 	if err != nil {
 		return nil, err
@@ -87,7 +88,7 @@ func (i *Identity) CreateUser(ctx context.Context, user gocloak.User, password s
 	return userKeycloak, nil
 }
 
-func (i *Identity) UpdateUser(ctx context.Context, user gocloak.User) (*gocloak.User, error) {
+func (i *IdentityUseCases) UpdateUser(ctx context.Context, user gocloak.User) (*gocloak.User, error) {
 	token, err := i.loginRestApiClient(ctx)
 	if err != nil {
 		return nil, err
@@ -119,7 +120,7 @@ func (i *Identity) UpdateUser(ctx context.Context, user gocloak.User) (*gocloak.
 	return userKeycloak, nil
 }
 
-func (i *Identity) DeleteUser(ctx context.Context, user gocloak.User) error {
+func (i *IdentityUseCases) DeleteUser(ctx context.Context, user gocloak.User) error {
 	token, err := i.loginRestApiClient(ctx)
 	if err != nil {
 		return nil
@@ -133,7 +134,7 @@ func (i *Identity) DeleteUser(ctx context.Context, user gocloak.User) error {
 	return nil
 }
 
-func (i *Identity) RetrospectToken(ctx context.Context, accessToken string) (*gocloak.IntroSpectTokenResult, error) {
+func (i *IdentityUseCases) RetrospectToken(ctx context.Context, accessToken string) (*gocloak.IntroSpectTokenResult, error) {
 	client := gocloak.NewClient(i.BaseUrl)
 	rptResult, err := client.RetrospectToken(ctx, accessToken, i.ClientId, i.ClientSecret, i.Realm)
 	if err != nil {
@@ -143,7 +144,7 @@ func (i *Identity) RetrospectToken(ctx context.Context, accessToken string) (*go
 	return rptResult, nil
 }
 
-func (i *Identity) GetUserList(ctx context.Context, query Searching) ([]*gocloak.User, error) {
+func (i *IdentityUseCases) GetUserList(ctx context.Context, query entity.QueryParamsUserList) ([]*gocloak.User, error) {
 	token, err := i.loginRestApiClient(ctx)
 	if err != nil {
 		return nil, err
@@ -156,7 +157,7 @@ func (i *Identity) GetUserList(ctx context.Context, query Searching) ([]*gocloak
 	return users, nil
 }
 
-func (i *Identity) validateMobileNumbers(ctx context.Context, mobileNumberList []string, token *gocloak.JWT, client *gocloak.GoCloak) (bool, error) {
+func (i *IdentityUseCases) validateMobileNumbers(ctx context.Context, mobileNumberList []string, token *gocloak.JWT, client *gocloak.GoCloak) (bool, error) {
 	uniqueMap := make(map[string]bool) // Для хранения уникальности каждого номера
 	users, err := client.GetUsers(ctx, token.AccessToken, i.Realm, gocloak.GetUsersParams{})
 	if err != nil {
