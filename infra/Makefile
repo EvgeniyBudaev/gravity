@@ -1,4 +1,3 @@
-CLIENT_BINARY=clientApp
 SERVER_BINARY=aggregationApp
 
 ## up: starts all containers in the background without forcing build

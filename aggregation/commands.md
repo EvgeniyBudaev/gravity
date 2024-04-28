@@ -153,7 +153,7 @@ go get -u github.com/gookit/goutil
 ```
 
 go-webp Сжатие изображений
-https://github.com/h2non/bim
+https://github.com/h2non/bimg
 ```
 sudo apt-get update
 sudo apt install libvips-dev

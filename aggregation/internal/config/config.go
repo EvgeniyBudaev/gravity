@@ -8,24 +8,24 @@ import (
 )
 
 type Config struct {
-	Port                string `envconfig:"PORT"`
-	LoggerLevel         string `envconfig:"LOGGER_LEVEL"`
-	Host                string `envconfig:"HOST"`
-	DBPort              string `envconfig:"POSTGRES_PORT"`
-	DBUser              string `envconfig:"POSTGRES_USER"`
-	DBPassword          string `envconfig:"POSTGRES_PASSWORD"`
-	DBName              string `envconfig:"POSTGRES_NAME"`
-	DBSSlMode           string `envconfig:"POSTGRES_SSLMODE"`
-	JWTSecret           string `envconfig:"JWT_SECRET"`
-	JWTIssuer           string `envconfig:"JWT_ISSUER"`
-	JWTAudience         string `envconfig:"JWT_AUDIENCE"`
-	CookieDomain        string `envconfig:"COOKIE_DOMAIN"`
-	Domain              string `envconfig:"DOMAIN"`
-	BaseUrl             string `envconfig:"KEYCLOAK_BASE_URL"`
-	Realm               string `envconfig:"KEYCLOAK_REALM"`
-	ClientId            string `envconfig:"KEYCLOAK_CLIENT_ID"`
-	ClientSecret        string `envconfig:"KEYCLOAK_CLIENT_SECRET"`
-	RealmRS256PublicKey string `envconfig:"KEYCLOAK_REALM_RS256_PUBLIC_KEY"`
+	Port                string `envconfig:"AGGREGATION_PORT"`
+	LoggerLevel         string `envconfig:"AGGREGATION_LOGGER_LEVEL"`
+	Host                string `envconfig:"AGGREGATION_HOST"`
+	DBPort              string `envconfig:"AGGREGATION_POSTGRES_PORT"`
+	DBUser              string `envconfig:"AGGREGATION_POSTGRES_USER"`
+	DBPassword          string `envconfig:"AGGREGATION_POSTGRES_PASSWORD"`
+	DBName              string `envconfig:"AGGREGATION_POSTGRES_NAME"`
+	DBSSlMode           string `envconfig:"AGGREGATION_POSTGRES_SSLMODE"`
+	JWTSecret           string `envconfig:"AGGREGATION_JWT_SECRET"`
+	JWTIssuer           string `envconfig:"AGGREGATION_JWT_ISSUER"`
+	JWTAudience         string `envconfig:"AGGREGATION_JWT_AUDIENCE"`
+	CookieDomain        string `envconfig:"AGGREGATION_COOKIE_DOMAIN"`
+	Domain              string `envconfig:"AGGREGATION_DOMAIN"`
+	BaseUrl             string `envconfig:"AGGREGATION_KEYCLOAK_BASE_URL"`
+	Realm               string `envconfig:"AGGREGATION_KEYCLOAK_REALM"`
+	ClientId            string `envconfig:"AGGREGATION_KEYCLOAK_CLIENT_ID"`
+	ClientSecret        string `envconfig:"AGGREGATION_KEYCLOAK_CLIENT_SECRET"`
+	RealmRS256PublicKey string `envconfig:"AGGREGATION_KEYCLOAK_REALM_RS256_PUBLIC_KEY"`
 	TelegramBotToken    string `envconfig:"TELEGRAM_BOT_TOKEN"`
 }
 
@@ -35,7 +35,7 @@ func Load(l logger.Logger) (*Config, error) {
 		l.Debug("error func Load, method Load by path internal/config/config.go", zap.Error(err))
 		return nil, err
 	}
-	err := envconfig.Process("MYAPP", &cfg)
+	err := envconfig.Process("GRAVITY", &cfg)
 	if err != nil {
 		l.Debug("error func Load, method Process by path internal/config/config.go", zap.Error(err))
 		return nil, err
