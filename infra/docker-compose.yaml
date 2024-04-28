@@ -31,11 +31,11 @@ services:
     networks:
       - backend
 
-  server-service:
-    container_name: server-service_container
+  aggregation:
+    container_name: aggregation_container
     build:
-      context: ../server-service
-      dockerfile: ../server-service/server-service.dockerfile
+      context: ../aggregation
+      dockerfile: ../aggregation/aggregation.dockerfile
     restart: always
     ports:
       - "8080:8080"
@@ -50,11 +50,11 @@ services:
     networks:
       - backend
 
-  client-service:
-    container_name: client-service_container
+  web:
+    container_name: web_container
     build:
-      context: ../client-service
-      dockerfile: ../client-service/client-service.dockerfile
+      context: ../web
+      dockerfile: ../web/web.dockerfile
     restart: always
     ports:
       - "3000:3000"
@@ -62,7 +62,7 @@ services:
       - /app
       - /app/node_modules
     depends_on:
-      - server-service
+      - aggregation
       - keycloak
     env_file:
       - ./.env.prod

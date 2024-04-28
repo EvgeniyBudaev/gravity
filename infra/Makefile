@@ -1,5 +1,5 @@
 CLIENT_BINARY=clientApp
-SERVER_BINARY=serverApp
+SERVER_BINARY=aggregationApp
 
 ## up: starts all containers in the background without forcing build
 up:
@@ -24,5 +24,5 @@ down:
 ## build_server: builds the server binary as a linux executable
 build_server:
 	@echo "Building server binary..."
-	chdir ../server-service && set GOOS=linux && set GOARCH=amd64 && set CGO_ENABLED=0 && go build -o ./bin/${SERVER_BINARY} ./cmd
+	chdir ../aggregation && set GOOS=linux && set GOARCH=amd64 && set CGO_ENABLED=0 && go build -o ./bin/${SERVER_BINARY} ./cmd
 	@echo "Done!"
