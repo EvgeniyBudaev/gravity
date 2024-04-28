@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/config"
 	"github.com/EvgeniyBudaev/gravity/server-service/internal/logger"
-	"github.com/EvgeniyBudaev/gravity/server-service/internal/usecases"
 	"github.com/Nerzal/gocloak/v13"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -144,7 +143,7 @@ func (i *Identity) RetrospectToken(ctx context.Context, accessToken string) (*go
 	return rptResult, nil
 }
 
-func (i *Identity) GetUserList(ctx context.Context, query usecases.QueryParamsUserList) ([]*gocloak.User, error) {
+func (i *Identity) GetUserList(ctx context.Context, query Searching) ([]*gocloak.User, error) {
 	token, err := i.loginRestApiClient(ctx)
 	if err != nil {
 		return nil, err
