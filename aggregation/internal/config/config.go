@@ -10,12 +10,12 @@ import (
 type Config struct {
 	Port                string `envconfig:"AGGREGATION_PORT"`
 	LoggerLevel         string `envconfig:"AGGREGATION_LOGGER_LEVEL"`
-	Host                string `envconfig:"AGGREGATION_HOST"`
-	DBPort              string `envconfig:"AGGREGATION_POSTGRES_PORT"`
-	DBUser              string `envconfig:"AGGREGATION_POSTGRES_USER"`
-	DBPassword          string `envconfig:"AGGREGATION_POSTGRES_PASSWORD"`
-	DBName              string `envconfig:"AGGREGATION_POSTGRES_NAME"`
-	DBSSlMode           string `envconfig:"AGGREGATION_POSTGRES_SSLMODE"`
+	Host                string `envconfig:"HOST"`
+	DBPort              string `envconfig:"POSTGRES_PORT"`
+	DBUser              string `envconfig:"POSTGRES_USER"`
+	DBPassword          string `envconfig:"POSTGRES_PASSWORD"`
+	DBName              string `envconfig:"POSTGRES_NAME"`
+	DBSSlMode           string `envconfig:"POSTGRES_SSLMODE"`
 	JWTSecret           string `envconfig:"AGGREGATION_JWT_SECRET"`
 	JWTIssuer           string `envconfig:"AGGREGATION_JWT_ISSUER"`
 	JWTAudience         string `envconfig:"AGGREGATION_JWT_AUDIENCE"`
