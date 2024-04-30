@@ -33,7 +33,7 @@ services:
       dockerfile: ../aggregation/Dockerfile
     restart: always
     ports:
-      - "8000:8000"
+      - "9000:9000"
     deploy:
       mode: replicated
       replicas: 1
@@ -49,9 +49,9 @@ services:
       context: ../web
       dockerfile: ../web/Dockerfile
     restart: always
-    volumes:
-      - /app
-      - /app/node_modules
+#    volumes:
+#      - /app
+#      - /app/node_modules
     depends_on:
       - aggregation
       - keycloak

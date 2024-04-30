@@ -165,6 +165,7 @@ Stop process
 sudo lsof -i :15672
 sudo lsof -i :5432
 sudo lsof -i :3000
+sudo lsof -i :80
 sudo kill PID_number
 ```
 
@@ -377,6 +378,7 @@ scp .env budaev799@158.160.90.159:/home/budaev799/.env
 ```
 без CI/CD
 ```
+scp ./.env budaev799@158.160.90.159:/home/budaev799/gravity/infra/.env
 scp ../aggregation/.env.prod budaev799@158.160.90.159:/home/budaev799/gravity/aggregation/.env
 scp ../web/.env.prod budaev799@158.160.90.159:/home/budaev799/gravity/web/.env
 ```
