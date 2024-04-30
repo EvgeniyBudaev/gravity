@@ -323,6 +323,11 @@ sudo docker rm container_id
 sudo docker image rm id_image
 ```
 
+Удаление volume
+```
+sudo docker volume rm volume_name
+```
+
 Удаление всех контейнеров
 ```
 sudo docker rm -f $(docker ps -a -q)

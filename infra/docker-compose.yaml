@@ -49,9 +49,9 @@ services:
       context: ../web
       dockerfile: ../web/Dockerfile
     restart: always
-#    volumes:
-#      - /app
-#      - /app/node_modules
+    volumes:
+      - /app
+      - /app/node_modules
     depends_on:
       - aggregation
       - keycloak
