@@ -2,7 +2,7 @@
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
-    server_name gravity-selectel.ddnsking.com;
+    server_name gravity-web.ddnsking.com www.gravity-web.ddnsking.com;
     return 301 https://$host$request_uri;
 }
 
@@ -10,7 +10,7 @@ server {
 server {
     server_tokens off;
     listen 443 ssl;
-    server_name gravity-selectel.ddnsking.com;
+    server_name gravity-web.ddnsking.com www.gravity-web.ddnsking.com;
 
         location /api/ {
             proxy_set_header Host $host;

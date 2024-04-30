@@ -212,8 +212,8 @@ curl http://127.0.0.1:8080/api/v1/user/add
 Установка Go на сервере ubuntu
 https://timeweb.cloud/tutorials/go/ustanovka-go-na-ubuntu
 ```
-wget https://go.dev/dl/go1.21.1.linux-amd64.tar.gz
-sudo tar -C /usr/local -xzf go1.21.1.linux-amd64.tar.gz
+wget https://go.dev/dl/go1.22.1.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.22.1.linux-amd64.tar.gz
 sudo nano ~/.profile
 
 export PATH=$PATH:/usr/local/go/bin
@@ -239,7 +239,9 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
 nvm --help
-nvm install 18.17.0
+nvm install 20.12.2
+nvm use 20.12.2
+node --version
 ```
 
 Установка Git
@@ -360,15 +362,12 @@ cat ~/.ssh/id_rsa.pub
 ```
 cat ~/.ssh/id_rsa.pub
 ssh-copy-id -i ~/.ssh/id_rsa.pub root@158.160.90.159
+--- server #2 ---
+ssh-copy-id -i ~/.ssh/id_rsa.pub root@91.236.199.58
 ```
 Добавление приватного ключа на удаленный сервер
 ```
 cat ~/.ssh/id_rsa
-```
-
-Зайти на удаленный сервер
-```
-ssh budaev799@158.160.90.159
 ```
 
 Отредактируйте файл nginx.conf и в строке server_name впишите свой IP
@@ -422,7 +421,7 @@ sudo certbot --nginx
 sudo systemctl reload nginx 
 ```
 
-Получение к серверу
+Вход на сервер
 ```
 ssh budaev799@158.160.90.159
 ```
@@ -432,3 +431,5 @@ ssh budaev799@158.160.90.159
 ```
 make up_build
 ```
+gravity-web.ddnsking.com
+gravity-selectel.ddnsking.com
