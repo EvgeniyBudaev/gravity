@@ -385,6 +385,10 @@ scp .env budaev799@158.160.90.159:/home/budaev799/.env
 scp ./.env budaev799@158.160.90.159:/home/budaev799/gravity/infra/.env
 scp ../aggregation/.env.prod budaev799@158.160.90.159:/home/budaev799/gravity/aggregation/.env
 scp ../web/.env.prod budaev799@158.160.90.159:/home/budaev799/gravity/web/.env
+
+scp ./.env root@91.236.199.58:/root/gravity/infra/.env
+scp ../aggregation/.env.prod root@91.236.199.58:/root/gravity/aggregation/.env
+scp ../web/.env.prod root@91.236.199.58:/root/gravity/web/.env
 ```
 
 Клонирование
@@ -424,6 +428,7 @@ sudo systemctl reload nginx
 Вход на сервер
 ```
 ssh budaev799@158.160.90.159
+ssh root@91.236.199.58
 ```
 
 Без CI/CD
