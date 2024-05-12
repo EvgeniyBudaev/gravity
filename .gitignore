@@ -59,6 +59,7 @@ cmd/shortener/shortener
 vendor/
 
 # IDEs directories
+.idea
 ../.idea
 .vscode
 */**/.DS_Store
