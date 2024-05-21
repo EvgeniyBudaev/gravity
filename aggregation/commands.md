@@ -332,11 +332,11 @@ sudo docker volume rm volume_name
 
 Удаление всех контейнеров
 ```
-sudo docker rm -f $(docker ps -a -q)
+sudo docker rm -f $(sudo docker ps -a -q)
 ```
 Удаление всех образов
 ```
-sudo docker rmi -f $(docker images -q)
+sudo docker rmi -f $(sudo docker images -q)
 ```
 
 Удаление всех volumes
