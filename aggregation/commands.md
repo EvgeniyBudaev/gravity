@@ -217,6 +217,14 @@ rm -rf go1.21.1.linux-amd64.tar.gz
 ```
 
 Установка Docker
+https://docs.docker.com/desktop/install/ubuntu/
+```
+sudo apt-get update
+sudo apt-get install ./docker-desktop-4.30.0-amd64.deb
+systemctl --user start docker-desktop
+```
+
+Установка Docker на сервер
 https://selectel.ru/blog/docker-install-ubuntu/
 ```
 sudo apt update
@@ -230,17 +238,43 @@ sudo systemctl enable docker
 docker -v
 ```
 
+Удаление Docker
+```
+dpkg -l | grep -i docker
+sudo apt-get purge -y docker-engine docker docker.io docker-ce docker-ce-cli docker-compose-plugin
+sudo apt-get autoremove -y --purge docker-engine docker docker.io docker-ce docker-compose-plugin
+sudo rm -rf /var/lib/docker /etc/docker
+sudo rm /etc/apparmor.d/docker
+sudo groupdel docker
+sudo rm -rf /var/run/docker.sock
+sudo rm -rf /var/lib/containerd
+sudo rm -r ~/.docker
+```
+
 Установка Docker compose
 https://docs.docker.com/compose/install/linux/
 ```
-вариант 1)
-sudo curl -L "https://github.com/docker/compose/releases/download/1.28.6/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-sudo docker–compose –version
-вариант 2)
+вариант 1) официальный
 sudo apt-get update
 sudo apt-get install docker-compose-plugin
 docker compose version
+вариант 2)
+sudo curl -L "https://github.com/docker/compose/releases/download/1.28.6/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+sudo docker–compose –version
+```
+
+Применение docker compose
+https://docs.docker.com/compose/production/
+```
+docker compose build web
+docker compose up --no-deps -d web
+```
+
+Удаление Docker compose
+```
+sudo apt-get remove docker-compose-plugin
+sudo rm -rf /usr/bin/docker-compose
 ```
 
 Установка Make
