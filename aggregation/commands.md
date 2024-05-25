@@ -217,11 +217,37 @@ rm -rf go1.21.1.linux-amd64.tar.gz
 ```
 
 Установка Docker
+https://docs.docker.com/engine/install/ubuntu/
+```
+for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+```
+
+Установка Docker Desktop
 https://docs.docker.com/desktop/install/ubuntu/
 ```
 sudo apt-get update
 sudo apt-get install ./docker-desktop-4.30.0-amd64.deb
 systemctl --user start docker-desktop
+systemctl --user enable docker-desktop
+https://kodprog.ru/ustanovka-docker-desktop-v-linux-ubuntu-2004#gsc.tab=0
+```
+
+docker compose up --build 
+Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+```
+docker context use desktop-linux
 ```
 
 Установка Docker на сервер
@@ -243,6 +269,7 @@ docker -v
 dpkg -l | grep -i docker
 sudo apt-get purge -y docker-engine docker docker.io docker-ce docker-ce-cli docker-compose-plugin
 sudo apt-get autoremove -y --purge docker-engine docker docker.io docker-ce docker-compose-plugin
+sudo apt remove docker-buildx-plugin
 sudo rm -rf /var/lib/docker /etc/docker
 sudo rm /etc/apparmor.d/docker
 sudo groupdel docker
@@ -341,20 +368,24 @@ sudo docker image rm id_image
 
 Удаление volume
 ```
+docker volume rm volume_name
 sudo docker volume rm volume_name
 ```
 
 Удаление всех контейнеров
 ```
+docker rm -f $(docker ps -a -q)
 sudo docker rm -f $(sudo docker ps -a -q)
 ```
 Удаление всех образов
 ```
+docker rmi -f $(docker images -q)
 sudo docker rmi -f $(sudo docker images -q)
 ```
 
 Удаление всех volumes
 ```
+docker volume prune
 sudo docker volume prune
 ```
 
