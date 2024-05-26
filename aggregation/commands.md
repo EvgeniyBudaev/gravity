@@ -483,3 +483,21 @@ make up_build
 ```
 gravity-web.ddnsking.com
 gravity-selectel.ddnsking.com
+
+Install GitLab Runner with Docker
+https://docs.gitlab.com/runner/install/docker.html
+```
+docker volume create n1-gitlab-runner-config
+
+docker run -d --name n1-gitlab-runner --restart always \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v n1-gitlab-runner-config:/etc/gitlab-runner \
+    gitlab/gitlab-runner:latest
+```
+На сайте gitlab создаем новый раннер с именем docker
+```
+gitlab-runner register  --url https://gitlab.com  --token glrt-TZUxWswFnSQ3wnxeFEqt
+```
+```
+docker exec -it n1-gitlab-runner-config gitlab-runner register
+```
