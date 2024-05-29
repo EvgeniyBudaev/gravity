@@ -501,3 +501,9 @@ gitlab-runner register  --url https://gitlab.com  --token glrt-TZUxWswFnSQ3wnxeF
 ```
 docker exec -it n1-gitlab-runner-config gitlab-runner register
 ```
+
+Восстановление дампа
+https://stackoverflow.com/questions/24718706/backup-restore-a-dockerized-postgresql-database
+```
+cat absolute_path.sql | docker exec -i postgres_container psql -U db_user -d db_name
+```
