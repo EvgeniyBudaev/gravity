@@ -332,6 +332,12 @@ psql
 root
 ```
 
+Восстановление дампа
+https://stackoverflow.com/questions/24718706/backup-restore-a-dockerized-postgresql-database
+```
+cat absolute_path.sql | docker exec -i postgres_container psql -U db_user -d db_name
+```
+
 Stop process
 ```
 sudo lsof -i :15672
@@ -484,26 +490,45 @@ make up_build
 gravity-web.ddnsking.com
 gravity-selectel.ddnsking.com
 
-Install GitLab Runner with Docker
-https://docs.gitlab.com/runner/install/docker.html
+--- Gitlab Runner ---
+Регистрация runner
+https://gitlab.com/evgeniybudaev/cicd-docker-go-next/-/runners/new
 ```
-docker volume create n1-gitlab-runner-config
+nano config.toml
+cd /etc/gitlab-runner
+gitlab-runner register --url https://gitlab.com --token t@ken
+systemctl status gitlab-runner
+systemctl restart gitlab-runner
+```
+если ошибки с ранером, то можно запустить из терминала на сервере
+```
+docker run --name aggregation --rm -p 9000:9000 registry.gitlab.com/evgeniybudaev/gravity:v1
+```
+в gitlab-ci.yml
+```
+pwd
+whoami
+```
+на сервере
+```
+addgroup gitlab-runner docker
+```
 
-docker run -d --name n1-gitlab-runner --restart always \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    -v n1-gitlab-runner-config:/etc/gitlab-runner \
-    gitlab/gitlab-runner:latest
+Список раннеров
 ```
-На сайте gitlab создаем новый раннер с именем docker
-```
-gitlab-runner register  --url https://gitlab.com  --token glrt-TZUxWswFnSQ3wnxeFEqt
-```
-```
-docker exec -it n1-gitlab-runner-config gitlab-runner register
+gitlab-runner list
 ```
 
-Восстановление дампа
-https://stackoverflow.com/questions/24718706/backup-restore-a-dockerized-postgresql-database
+gitlab-runner unregister
+По URL и токену
 ```
-cat absolute_path.sql | docker exec -i postgres_container psql -U db_user -d db_name
+gitlab-runner unregister --url "https://gitlab.com/" --token t0k3n
+```
+По имени
+```
+gitlab-runner unregister --name test-runner
+```
+Все бегуны
+```
+gitlab-runner unregister --all-runners
 ```
